@@ -1,0 +1,105 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="PillarAPI.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="SA_PILLAR_QUEUE" Type="System.String" Scope="User">
+      <Value Profile="(Default)">queue://sa_pillar_queue</Value>
+    </Setting>
+    <Setting Name="MESSAGE_BUS_CONFIGURATION_URL" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ssl://217.198.211.150:61616?transport.clientcertfilename=D:/Downloads/Apache/apache-activemq-5.5.1/conf/client.cer&amp;transport.acceptInvalidBrokerCert=true</Value>
+    </Setting>
+    <Setting Name="PILLAR_ID" Type="System.String" Scope="User">
+      <Value Profile="(Default)">kbpillar2</Value>
+    </Setting>
+    <Setting Name="GENERAL_TOPIC_SUBSCRIBER" Type="System.String" Scope="User">
+      <Value Profile="(Default)">general_topic_subscriber</Value>
+    </Setting>
+    <Setting Name="SA_QUEUE_SUBSCRIBER" Type="System.String" Scope="User">
+      <Value Profile="(Default)">sa_topic_subscriber</Value>
+    </Setting>
+    <Setting Name="SQLITE_CONNECTION_STRING" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Data Source=D:\Udvikling\bmpSQLite.s3db;Version=3;LockingMode=Exclusive;Pooling=True;MaxPoolSize=200;</Value>
+    </Setting>
+    <Setting Name="COLLECTION_DESTINATION" Type="System.String" Scope="User">
+      <Value Profile="(Default)">topic://integrationtest1</Value>
+    </Setting>
+    <Setting Name="COLLECTION_FILE_DIRECTORY" Type="System.String" Scope="User">
+      <Value Profile="(Default)">D:\collectionFiles\</Value>
+    </Setting>
+    <Setting Name="MESSAGE_XSD_FILE_PATH" Type="System.String" Scope="User">
+      <Value Profile="(Default)">D:\Udvikling\Kode\xsdFiles\bitrepository-message-xml-24\xsd\BitRepositoryMessages.xsd</Value>
+    </Setting>
+    <Setting Name="XSD_VERSION" Type="System.String" Scope="User">
+      <Value Profile="(Default)">17</Value>
+    </Setting>
+    <Setting Name="MIN_MESSAGE_XSD_VERSION" Type="System.String" Scope="User">
+      <Value Profile="(Default)">17</Value>
+    </Setting>
+    <Setting Name="DEFAULT_CHECKSUM_TYPE" Type="System.String" Scope="User">
+      <Value Profile="(Default)">MD5</Value>
+    </Setting>
+    <Setting Name="ALLOWED_FILE_ID_PATTERN" Type="System.String" Scope="User">
+      <Value Profile="(Default)">@"^[a-zA-Z_\.\-0-9]+$"</Value>
+    </Setting>
+    <Setting Name="REQUERED_MESSAGE_AUTHENTICATION" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="REQUERED_OPERATION_AUTHENTICATION" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="REQUERED_CHECKSUM_FOR_DESTRUCTIVE_REQUESTS" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="REQUERED_CHECKSUM_FOR_NEW_FILE_REQUEST" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ALARM_DESTINATION" Type="System.String" Scope="User">
+      <Value Profile="(Default)">topic://sa-test.alarms</Value>
+    </Setting>
+    <Setting Name="CONTRIBUTOR_ID" Type="System.String" Scope="User">
+      <Value Profile="(Default)">sa-test-pillar</Value>
+    </Setting>
+    <Setting Name="COLLECTION_ID" Type="System.String" Scope="User">
+      <Value Profile="(Default)">integrationtest1</Value>
+    </Setting>
+    <Setting Name="COLLECTION_SETTINGS_VERSION" Type="System.String" Scope="User">
+      <Value Profile="(Default)">0.9</Value>
+    </Setting>
+    <Setting Name="COLLECTION_SETTINGS_XML_FILE_PATH" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="COLLECTION_SETTINGS_XSD_FILE_PATH" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Udvikling\Kode\TestTing\xsdFiles\bitrepository-collection-settings-0.9\xsd</Value>
+    </Setting>
+    <Setting Name="XML_NAMESPACE" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://bitrepository.org/BitRepositoryMessages.xsd</Value>
+    </Setting>
+    <Setting Name="PRIVATE_CERTIFICATE_THUMBPRINT" Type="System.String" Scope="User">
+      <Value Profile="(Default)">B60843F8A3BFBD2944EAF9043D9C2443B936A981</Value>
+    </Setting>
+    <Setting Name="USER_CERTIFICATES_STORE" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Root</Value>
+    </Setting>
+    <Setting Name="PUBLIC_CERTIFICATE_THUMBPRINT" Type="System.String" Scope="User">
+      <Value Profile="(Default)">B60843F8A3BFBD2944EAF9043D9C2443B936A981</Value>
+    </Setting>
+    <Setting Name="DRIVES4STORAGE" Type="System.String" Scope="User">
+      <Value Profile="(Default)">U:</Value>
+    </Setting>
+    <Setting Name="WEBDAV_BASEFOLDERNAME" Type="System.String" Scope="User">
+      <Value Profile="(Default)">dav</Value>
+    </Setting>
+    <Setting Name="WEBDAV_CLIENT_CERTIFICATE_THUMBPRINT" Type="System.String" Scope="User">
+      <Value Profile="(Default)">147cafe2c7d0b07d3a61653977a87ff7fe91f5c6</Value>
+    </Setting>
+    <Setting Name="WEBDAV_IP_ADDRESS" Type="System.String" Scope="User">
+      <Value Profile="(Default)">217.198.211.150</Value>
+    </Setting>
+    <Setting Name="WEBDAV_HTTP_PORT" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">443</Value>
+    </Setting>
+    <Setting Name="WEBDAV_URI_SCHEME" Type="System.String" Scope="User">
+      <Value Profile="(Default)">HTTPS</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

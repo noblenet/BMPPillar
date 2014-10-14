@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="PillarTest.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="SQLITE_CONNECTION_STRING" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Data Source=C:\Udvikling\bmpSQLiteTest4.s3db;Version=3;Pooling=True;MaxPoolSize=100;</Value>
+    </Setting>
+    <Setting Name="Path2Settingsfile" Type="System.String" Scope="User">
+      <Value Profile="(Default)">e:\finalsettings.xml</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

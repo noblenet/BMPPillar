@@ -1,0 +1,26 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)"
+              GeneratedClassNamespace="BMPInterface.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="defaultBroker" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">activemq:tcp://localhost:61616</Value>
+    </Setting>
+    <Setting Name="defaultClientID" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">BMP.SA.DefaultConsumer</Value>
+    </Setting>
+    <Setting Name="topTopicName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">SA.TOP</Value>
+    </Setting>
+    <Setting Name="pillarTopicName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">SA.PILLAR</Value>
+    </Setting>
+    <Setting Name="clientTopicName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">SA.CLIENT</Value>
+    </Setting>
+    <Setting Name="BMPMessageType" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">org.bitrepository.messages.type</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

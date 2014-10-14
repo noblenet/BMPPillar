@@ -1,0 +1,231 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{22E92082-58CE-4131-8D98-9A75265FA7D8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PillarAPI</RootNamespace>
+    <AssemblyName>PillarAPI</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Apache.NMS, Version=1.6.0.3083, Culture=neutral, PublicKeyToken=82756feee3957618, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Apache.NMS.1.6.0.3083\lib\net40\Apache.NMS.dll</HintPath>
+    </Reference>
+    <Reference Include="Apache.NMS.ActiveMQ, Version=1.6.2.3271, Culture=neutral, PublicKeyToken=82756feee3957618, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Apache.NMS.ActiveMQ.1.6.2\lib\net40\Apache.NMS.ActiveMQ.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Core, Version=3.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Castle.Core.3.2.2\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Facilities.Logging">
+      <HintPath>..\packages\Castle.LoggingFacility.3.2.0\lib\net45\Castle.Facilities.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor, Version=3.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Castle.Windsor.3.2.1\lib\net45\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="RetryHelper, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RetryHelper.1.2.0.0\lib\net40\RetryHelper.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite, Version=1.0.92.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\System.Data.SQLite.1.0.84.0\lib\net45\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WebdavTransfer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\SolutionItems\WebdavTransfer.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ActiveMQ\ActiveMqITextMessage.cs" />
+    <Compile Include="ActiveMQ\ActiveMqPublisher.cs" />
+    <Compile Include="ActiveMQ\ActiveMqQueueSubscriber.cs" />
+    <Compile Include="ActiveMQ\ActiveMQSetup.cs" />
+    <Compile Include="ActiveMQ\ActiveMqTopicSubscriber.cs" />
+    <Compile Include="BitRepositoryElements.cs" />
+    <Compile Include="CustomExceptions\NotApplicableException.cs" />
+    <Compile Include="CustomExceptions\QueueNotAccessibleException.cs" />
+    <Compile Include="IdentifyResponses\ChecksumResponseBuilderForIdentifyPillarsForGetFileRequest.cs" />
+    <Compile Include="Interfaces\IResponseBuilderForIdentifyPillarsForGetFileRequest.cs" />
+    <Compile Include="PillarAPISetttings.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="RequestResponses\PutFileWithWebDav.cs" />
+    <Compile Include="RequestResponses\ChecksumGetFile.cs" />
+    <Compile Include="IOC.cs" />
+    <Compile Include="CustomExceptions\SigningVerifyingMessageException.cs" />
+    <Compile Include="DependencyInjection.cs" />
+    <Compile Include="Enums\FileStatesEnum.cs" />
+    <Compile Include="CollectionSettings.cs" />
+    <Compile Include="CustomExceptions\BaseCustomException.cs" />
+    <Compile Include="CustomExceptions\NotFromValidCollectionException.cs" />
+    <Compile Include="DatabaseConnection.cs" />
+    <Compile Include="Enums\PillarTypeEnum.cs" />
+    <Compile Include="Interfaces\IDeleteFile.cs" />
+    <Compile Include="Interfaces\IGetAuditTrail.cs" />
+    <Compile Include="Interfaces\IGetChecksum.cs" />
+    <Compile Include="Interfaces\IGetFileId.cs" />
+    <Compile Include="Interfaces\IGetStatus.cs" />
+    <Compile Include="Interfaces\IPillar.cs" />
+    <Compile Include="Interfaces\IReplaceFile.cs" />
+    <Compile Include="Interfaces\IPillarWrapper.cs" />
+    <Compile Include="Models\AuditPoco.cs" />
+    <Compile Include="Models\ChecksumPoco.cs" />
+    <Compile Include="Models\ChecksumsTypePoco.cs" />
+    <Compile Include="Models\FileSpecPoco.cs" />
+    <Compile Include="Models\FilePoco.cs" />
+    <Compile Include="Models\PetaPoco.cs" />
+    <Compile Include="PillarWrapper.cs" />
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="RequestResponses\ChecksumGetChecksum.cs" />
+    <Compile Include="RequestResponses\ChecksumPutFile.cs" />
+    <Compile Include="RequestResponses\DeleteFile.cs" />
+    <Compile Include="FileInfoContainer.cs" />
+    <Compile Include="RequestResponses\GetAuditTrail.cs" />
+    <Compile Include="RequestResponses\GetChecksum.cs" />
+    <Compile Include="RequestResponses\GetStatus.cs" />
+    <Compile Include="Interfaces\IMessageInfoContainer.cs" />
+    <Compile Include="MessageInfoContainer.cs" />
+    <Compile Include="Pillar.cs" />
+    <Compile Include="IdentifyResponses\ResponseBuilderForIdentifyContributorsForGetAuditTrailsRequest.cs" />
+    <Compile Include="IdentifyResponses\ResponseBuilderForIdentifyPillarsForGetFileRequest.cs" />
+    <Compile Include="IdentifyResponses\ResponseBuilderForIdentifyPillarsForDeleteFileRequest.cs" />
+    <Compile Include="IdentifyResponses\ResponseBuilderForIdentifyPillarsForGetCheckSumsRequest.cs" />
+    <Compile Include="IdentifyResponses\ResponseBuilderForIdentifyPillarsForGetFileIDsRequest.cs" />
+    <Compile Include="IdentifyResponses\ResponseBuilderForIdentifyPillarsForPutFileRequest.cs" />
+    <Compile Include="IdentifyResponses\ResponseBuilderForIdentifyPillarsForReplaceFileRequest.cs" />
+    <Compile Include="Interfaces\IGetFile.cs" />
+    <Compile Include="Interfaces\IPutFile.cs" />
+    <Compile Include="RequestResponses\GetFileWithWebDav.cs" />
+    <Compile Include="RequestResponses\ReplaceFile.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="Subscriber.cs" />
+    <Compile Include="Utilities\ChecksumUtilities.cs" />
+    <Compile Include="Utilities\StorageUtility.cs" />
+    <Compile Include="Utilities\CmsMessageUtilities.cs" />
+    <Compile Include="Utilities\DBUtilities.cs" />
+    <Compile Include="Utilities\SerializationUtilities.cs" />
+    <Compile Include="Utilities\CollectedUtilities.cs" />
+    <Compile Include="CollectEvents.cs" />
+    <Compile Include="RequestResponses\GetFile.cs" />
+    <Compile Include="RequestResponses\GetFileID.cs" />
+    <Compile Include="IdentifyPillarsGeneralTopicListener.cs" />
+    <Compile Include="PillarQueueListener.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestResponses\PutFile.cs" />
+    <Compile Include="Utilities\StringManipulation.cs" />
+    <Compile Include="Utilities\XmlUtilities.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="log4net.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\StorageHandler\StorageHandler.csproj">
+      <Project>{9997682a-3307-4a37-9c10-d10ab296fb5e}</Project>
+      <Name>StorageHandler</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
