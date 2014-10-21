@@ -36,7 +36,7 @@ namespace PillarAPI.RequestResponses
                 }
                 else
                 {
-                    Log.DebugFormat("Er i get og skal hente filen: {0}{1}.{2}.{3}", collectionDir, f1.FileId, f1.FileSpecId, fileName);
+                    Log.DebugFormat("Er i get og skal hente filen: {0}\\{1}.{2}.{3}", f1.FilePath, f1.FileId, f1.FileSpecId, fileName);
                     var filePath =  string.Format("{0}.{1}.{2}", f1.FileId, f1.FileSpecId, fileName);
                     filePath = Path.Combine(f1.FilePath, filePath);
                     if (!File.Exists(filePath)) // File is on Pillar, but not on local disk
