@@ -63,15 +63,15 @@ namespace PillarAPI
             GlobalConnection.Close();
         }
 
-        private void VerifyDBIsReady()
-        {
-            Log.InfoFormat("Connected to the database with '{0}'", Pillar.GlobalPillarApiSettings.SQLITE_CONNECTION_STRING);
-            Log.Info(DBUtilities.PrintInfo());
-        }
-
         public void KillPillar()
         {
             _keepRunning = false;
+        }
+
+        private void VerifyDBIsReady()
+        {
+            Log.InfoFormat("Connected to the database with '{0}'", GlobalPillarApiSettings.SQLITE_CONNECTION_STRING);
+            Log.Info(DBUtilities.PrintInfo());
         }
 
         private void VerifyStoreIsReady()

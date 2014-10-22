@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using PetaPoco;
+using PillarAPI.Utilities;
 using bmpxsd;
 using log4net;
-using PillarAPI.Models;
-using PillarAPI.Utilities;
 
 namespace PillarAPI.IdentifyResponses
 {
@@ -15,7 +15,8 @@ namespace PillarAPI.IdentifyResponses
 
         public static void MakeResponse(MessageInfoContainer message)
         {
-            var receivedIdentifyPillarsForGetCheckSumsRequest = message.MessageObject as IdentifyPillarsForGetChecksumsRequest;
+            var receivedIdentifyPillarsForGetCheckSumsRequest =
+                message.MessageObject as IdentifyPillarsForGetChecksumsRequest;
             if (receivedIdentifyPillarsForGetCheckSumsRequest == null) throw new ArgumentNullException("message");
 
 
@@ -34,7 +35,7 @@ namespace PillarAPI.IdentifyResponses
             }
             else
             {
-                if (!(receivedIdentifyPillarsForGetCheckSumsRequest.FileIDs.Item.GetType() == typeof(Object)))
+                if (!(receivedIdentifyPillarsForGetCheckSumsRequest.FileIDs.Item.GetType() == typeof (Object)))
                 {
                     string fileName = receivedIdentifyPillarsForGetCheckSumsRequest.FileIDs.Item.ToString();
                     var f1 = new FileInfoContainer(collectionId, fileName);
@@ -42,7 +43,8 @@ namespace PillarAPI.IdentifyResponses
                     if (string.IsNullOrEmpty(f1.FileId))
                     {
                         resInfo.ResponseCode = ResponseCode.FILE_NOT_FOUND_FAILURE;
-                        resInfo.ResponseText = "There is no file with the requested fileId in the repository. No checksum calculation is possible.";
+                        resInfo.ResponseText =
+                            "There is no file with the requested fileId in the repository. No checksum calculation is possible.";
                         timeType.TimeMeasureUnit = TimeMeasureUnit.HOURS;
                         timeType.TimeMeasureValue = "0";
                     }
@@ -50,14 +52,16 @@ namespace PillarAPI.IdentifyResponses
                     {
                         if (f1.Archived)
                         {
-                            ChecksumDataForFile_TYPE checksumDataForFileTypeForFile = CollectedUtilities.GetLatestChecksum(collectionId, fileName,
-                                receivedIdentifyPillarsForGetCheckSumsRequest.
-                                    ChecksumRequestForExistingFile);
+                            ChecksumDataForFile_TYPE checksumDataForFileTypeForFile =
+                                CollectedUtilities.GetLatestChecksum(collectionId, fileName,
+                                                                     receivedIdentifyPillarsForGetCheckSumsRequest.
+                                                                         ChecksumRequestForExistingFile);
 
                             if (checksumDataForFileTypeForFile == null)
                             {
                                 resInfo.ResponseCode = ResponseCode.IDENTIFICATION_NEGATIVE;
-                                resInfo.ResponseText = "File has been archived and is not available for checksum calculation. Contact SA and arrange for file to be transfered from storage";
+                                resInfo.ResponseText =
+                                    "File has been archived and is not available for checksum calculation. Contact SA and arrange for file to be transfered from storage";
                                 timeType.TimeMeasureUnit = TimeMeasureUnit.HOURS;
                                 timeType.TimeMeasureValue = "24";
                             }
@@ -84,43 +88,48 @@ namespace PillarAPI.IdentifyResponses
                 }
             }
             var responseObject = new IdentifyPillarsForGetChecksumsResponse
-            {
-                CollectionID = receivedIdentifyPillarsForGetCheckSumsRequest.CollectionID,
-                CorrelationID = receivedIdentifyPillarsForGetCheckSumsRequest.CorrelationID,
-                ChecksumRequestForExistingFile = receivedIdentifyPillarsForGetCheckSumsRequest.ChecksumRequestForExistingFile,
-                Destination = receivedIdentifyPillarsForGetCheckSumsRequest.ReplyTo,
-                FileIDs = receivedIdentifyPillarsForGetCheckSumsRequest.FileIDs,
-                From =Pillar.GlobalPillarApiSettings.PILLAR_ID,
-                minVersion = Pillar.GlobalPillarApiSettings.MIN_MESSAGE_XSD_VERSION,
-                PillarChecksumSpec = receivedIdentifyPillarsForGetCheckSumsRequest.ChecksumRequestForExistingFile,
-                PillarID = Pillar.GlobalPillarApiSettings.PILLAR_ID,
-                ReplyTo = Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE,
-                ResponseInfo = resInfo,
-                TimeToDeliver = timeType,
-                To = receivedIdentifyPillarsForGetCheckSumsRequest.From,
-                version = Pillar.GlobalPillarApiSettings.XSD_VERSION
-            };
+                                     {
+                                         CollectionID = receivedIdentifyPillarsForGetCheckSumsRequest.CollectionID,
+                                         CorrelationID = receivedIdentifyPillarsForGetCheckSumsRequest.CorrelationID,
+                                         ChecksumRequestForExistingFile =
+                                             receivedIdentifyPillarsForGetCheckSumsRequest
+                                             .ChecksumRequestForExistingFile,
+                                         Destination = receivedIdentifyPillarsForGetCheckSumsRequest.ReplyTo,
+                                         FileIDs = receivedIdentifyPillarsForGetCheckSumsRequest.FileIDs,
+                                         From = Pillar.GlobalPillarApiSettings.PILLAR_ID,
+                                         minVersion = Pillar.GlobalPillarApiSettings.MIN_MESSAGE_XSD_VERSION,
+                                         PillarChecksumSpec =
+                                             receivedIdentifyPillarsForGetCheckSumsRequest
+                                             .ChecksumRequestForExistingFile,
+                                         PillarID = Pillar.GlobalPillarApiSettings.PILLAR_ID,
+                                         ReplyTo = Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE,
+                                         ResponseInfo = resInfo,
+                                         TimeToDeliver = timeType,
+                                         To = receivedIdentifyPillarsForGetCheckSumsRequest.From,
+                                         version = Pillar.GlobalPillarApiSettings.XSD_VERSION
+                                     };
 
             new MessageInfoContainer(responseObject).Send();
         }
 
-        private static void GetInfoAboutCalculateChecksum(string collectionId, ResponseInfo resInfo, TimeMeasure_TYPE timeType)
+        private static void GetInfoAboutCalculateChecksum(string collectionId, ResponseInfo resInfo,
+                                                          TimeMeasure_TYPE timeType)
         {
-            using (var db = DatabaseConnection.GetConnection())
+            using (Database db = DatabaseConnection.GetConnection())
             {
-                var sqlString = Sql.Builder
-                    .Append("SELECT fs.archived, fs.file_id, fs.file_spec_id, f.file_name ")
-                    .Append("FROM file_specs fs, files f , users u ")
-                    .Append("WHERE u.collection_id = @0", collectionId)
-                    .Append("AND f.user_id = u.user_id")
-                    .Append("AND fs.file_id = f.file_id ")
-                    .Append("AND f.deleted = 0 ")
-                    .Append("AND fs.active = 1 ")
-                    .Append("ORDER BY fs.archived DESC");
+                Sql sqlString = Sql.Builder
+                                   .Append("SELECT fs.archived, fs.file_id, fs.file_spec_id, f.file_name ")
+                                   .Append("FROM file_specs fs, files f , users u ")
+                                   .Append("WHERE u.collection_id = @0", collectionId)
+                                   .Append("AND f.user_id = u.user_id")
+                                   .Append("AND fs.file_id = f.file_id ")
+                                   .Append("AND f.deleted = 0 ")
+                                   .Append("AND fs.active = 1 ")
+                                   .Append("ORDER BY fs.archived DESC");
 
                 try
                 {
-                    var result = db.Query<dynamic>(sqlString);
+                    IEnumerable<dynamic> result = db.Query<dynamic>(sqlString);
 
                     if (result.Any())
                     {
@@ -130,10 +139,11 @@ namespace PillarAPI.IdentifyResponses
                         }
                         else
                         {
-                            resInfo.ResponseText = "One or more files has been archived and are not available for new checksum calculations. " +
-                                                   "If you want new checksum calculations on all files, contact SA and have then transfer the files. " +
-                                                   "If new checksum calculations are not needed, the pillar has stored checksums for all files. " +
-                                                   "Stored check does not require files to be transfered";
+                            resInfo.ResponseText =
+                                "One or more files has been archived and are not available for new checksum calculations. " +
+                                "If you want new checksum calculations on all files, contact SA and have then transfer the files. " +
+                                "If new checksum calculations are not needed, the pillar has stored checksums for all files. " +
+                                "Stored check does not require files to be transfered";
                         }
 
                         resInfo.ResponseCode = ResponseCode.IDENTIFICATION_POSITIVE;

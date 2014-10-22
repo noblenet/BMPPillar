@@ -34,7 +34,8 @@ namespace PillarAPI.IdentifyResponses
                     resInfo.ResponseCode = ResponseCode.IDENTIFICATION_POSITIVE;
                     // IdentifyResponseText is a text for logging the type of identify response given.
                     // It does not have a semantic meaning, but contributes to a more readable log.
-                    resInfo.ResponseText = "Message request has been received and operation request is expected to be successful";
+                    resInfo.ResponseText =
+                        "Message request has been received and operation request is expected to be successful";
                     timeType.TimeMeasureUnit = TimeMeasureUnit.MILLISECONDS;
                     timeType.TimeMeasureValue = "3000";
                 }
@@ -49,25 +50,26 @@ namespace PillarAPI.IdentifyResponses
 
             // Can be places in a global Pillar object at some time
             var chkSpk = new ChecksumSpec_TYPE();
-            var chkType = (ChecksumType)Enum.Parse(typeof(ChecksumType),Pillar.GlobalPillarApiSettings.DEFAULT_CHECKSUM_TYPE);
+            var chkType =
+                (ChecksumType) Enum.Parse(typeof (ChecksumType), Pillar.GlobalPillarApiSettings.DEFAULT_CHECKSUM_TYPE);
             chkSpk.ChecksumType = chkType;
 
             var responseObjectV24 = new IdentifyPillarsForPutFileResponse
-                {
-                    CollectionID = receivedIdentifyPillarsForPutFileRequest.CollectionID,
-                    CorrelationID = receivedIdentifyPillarsForPutFileRequest.CorrelationID,
-                    Destination = receivedIdentifyPillarsForPutFileRequest.ReplyTo,
-                    FileID = receivedIdentifyPillarsForPutFileRequest.FileID,
-                    From =Pillar.GlobalPillarApiSettings.PILLAR_ID,
-                    PillarChecksumSpec = chkSpk,
-                    PillarID =Pillar.GlobalPillarApiSettings.PILLAR_ID,
-                    ReplyTo =Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE,
-                    ResponseInfo = resInfo,
-                    TimeToDeliver = timeType,
-                    To = receivedIdentifyPillarsForPutFileRequest.From,
-                    minVersion =Pillar.GlobalPillarApiSettings.MIN_MESSAGE_XSD_VERSION,
-                    version =Pillar.GlobalPillarApiSettings.XSD_VERSION
-                };
+                                        {
+                                            CollectionID = receivedIdentifyPillarsForPutFileRequest.CollectionID,
+                                            CorrelationID = receivedIdentifyPillarsForPutFileRequest.CorrelationID,
+                                            Destination = receivedIdentifyPillarsForPutFileRequest.ReplyTo,
+                                            FileID = receivedIdentifyPillarsForPutFileRequest.FileID,
+                                            From = Pillar.GlobalPillarApiSettings.PILLAR_ID,
+                                            PillarChecksumSpec = chkSpk,
+                                            PillarID = Pillar.GlobalPillarApiSettings.PILLAR_ID,
+                                            ReplyTo = Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE,
+                                            ResponseInfo = resInfo,
+                                            TimeToDeliver = timeType,
+                                            To = receivedIdentifyPillarsForPutFileRequest.From,
+                                            minVersion = Pillar.GlobalPillarApiSettings.MIN_MESSAGE_XSD_VERSION,
+                                            version = Pillar.GlobalPillarApiSettings.XSD_VERSION
+                                        };
             //responseObjectV24.ChecksumDataForExistingFile = ; // Checksum for the file in case a file with the supplied fileID already exists in the pillar.
 
             var a = new MessageInfoContainer(responseObjectV24);

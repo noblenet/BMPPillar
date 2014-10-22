@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Reflection;
+using PillarAPI.Enums;
+using PillarAPI.Interfaces;
 using bmpxsd;
 using log4net;
-using PillarAPI.Interfaces;
 
 namespace PillarAPI.IdentifyResponses
 {
-internal class ResponseBuilderForIdentifyPillarsForGetFileRequest : IResponseBuilderForIdentifyPillarsForGetFileRequest
+    internal class ResponseBuilderForIdentifyPillarsForGetFileRequest :
+        IResponseBuilderForIdentifyPillarsForGetFileRequest
     {
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public void SendResponse(IMessageInfoContainer message)
         {
-            var identifyPillarsForGetFileResponse = MakeResponse(message);
+            IdentifyPillarsForGetFileResponse identifyPillarsForGetFileResponse = MakeResponse(message);
             new MessageInfoContainer(identifyPillarsForGetFileResponse).Send();
         }
 
@@ -21,8 +23,8 @@ internal class ResponseBuilderForIdentifyPillarsForGetFileRequest : IResponseBui
             Log.Debug(message);
             var receivedIdentifyPillarsForGetFileRequest = message.MessageObject as IdentifyPillarsForGetFileRequest;
             if (receivedIdentifyPillarsForGetFileRequest == null) throw new ArgumentNullException("message");
-            var collectionId = receivedIdentifyPillarsForGetFileRequest.CollectionID;
-            var fileName = receivedIdentifyPillarsForGetFileRequest.FileID;
+            string collectionId = receivedIdentifyPillarsForGetFileRequest.CollectionID;
+            string fileName = receivedIdentifyPillarsForGetFileRequest.FileID;
             var f1 = new FileInfoContainer(collectionId, fileName);
             var timeType = new TimeMeasure_TYPE();
 
@@ -38,19 +40,21 @@ internal class ResponseBuilderForIdentifyPillarsForGetFileRequest : IResponseBui
             }
             else
             {
-                if (f1.FileStates != Enums.FileStatesEnum.NeverExisted)
+                if (f1.FileStates != FileStatesEnum.NeverExisted)
                 {
                     if (!Convert.ToBoolean(f1.Archived))
                     {
                         resInfo.ResponseCode = ResponseCode.IDENTIFICATION_POSITIVE;
-                        resInfo.ResponseText = "Get File request has been received and operation request is expected to be successful";
+                        resInfo.ResponseText =
+                            "Get File request has been received and operation request is expected to be successful";
                         timeType.TimeMeasureUnit = TimeMeasureUnit.MILLISECONDS;
                         timeType.TimeMeasureValue = "3000";
                     }
                     else
                     {
                         resInfo.ResponseCode = ResponseCode.IDENTIFICATION_POSITIVE;
-                        resInfo.ResponseText = "Get file request has been received. The file is in storage, contact SA and have them move the file. Then operation request will be successful";
+                        resInfo.ResponseText =
+                            "Get file request has been received. The file is in storage, contact SA and have them move the file. Then operation request will be successful";
                         timeType.TimeMeasureUnit = TimeMeasureUnit.HOURS;
                         timeType.TimeMeasureValue = "24";
                     }
@@ -64,21 +68,20 @@ internal class ResponseBuilderForIdentifyPillarsForGetFileRequest : IResponseBui
                 }
             }
             return new IdentifyPillarsForGetFileResponse
-                {
-                    CollectionID = receivedIdentifyPillarsForGetFileRequest.CollectionID,
-                    CorrelationID = receivedIdentifyPillarsForGetFileRequest.CorrelationID,
-                    Destination = receivedIdentifyPillarsForGetFileRequest.ReplyTo,
-                    FileID = receivedIdentifyPillarsForGetFileRequest.FileID,
-                    From =Pillar.GlobalPillarApiSettings.PILLAR_ID,
-                    minVersion =Pillar.GlobalPillarApiSettings.MIN_MESSAGE_XSD_VERSION,
-                    PillarID =Pillar.GlobalPillarApiSettings.PILLAR_ID,
-                    ReplyTo =Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE,
-                    ResponseInfo = resInfo,
-                    TimeToDeliver = timeType,
-                    To = receivedIdentifyPillarsForGetFileRequest.From,
-                    version =Pillar.GlobalPillarApiSettings.XSD_VERSION
-                };
-
+                       {
+                           CollectionID = receivedIdentifyPillarsForGetFileRequest.CollectionID,
+                           CorrelationID = receivedIdentifyPillarsForGetFileRequest.CorrelationID,
+                           Destination = receivedIdentifyPillarsForGetFileRequest.ReplyTo,
+                           FileID = receivedIdentifyPillarsForGetFileRequest.FileID,
+                           From = Pillar.GlobalPillarApiSettings.PILLAR_ID,
+                           minVersion = Pillar.GlobalPillarApiSettings.MIN_MESSAGE_XSD_VERSION,
+                           PillarID = Pillar.GlobalPillarApiSettings.PILLAR_ID,
+                           ReplyTo = Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE,
+                           ResponseInfo = resInfo,
+                           TimeToDeliver = timeType,
+                           To = receivedIdentifyPillarsForGetFileRequest.From,
+                           version = Pillar.GlobalPillarApiSettings.XSD_VERSION
+                       };
         }
     }
 }

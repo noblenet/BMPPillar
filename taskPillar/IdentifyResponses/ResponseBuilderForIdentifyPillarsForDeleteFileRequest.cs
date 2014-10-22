@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using bmpxsd;
-using log4net;
 using PillarAPI.Models;
 using PillarAPI.Utilities;
+using bmpxsd;
+using log4net;
 
 namespace PillarAPI.IdentifyResponses
 {
@@ -15,7 +15,8 @@ namespace PillarAPI.IdentifyResponses
 
         public static void MakeResponse(MessageInfoContainer message)
         {
-            var receivedIdentifyPillarsForDeleteFileRequest = message.MessageObject as IdentifyPillarsForDeleteFileRequest;
+            var receivedIdentifyPillarsForDeleteFileRequest =
+                message.MessageObject as IdentifyPillarsForDeleteFileRequest;
             if (receivedIdentifyPillarsForDeleteFileRequest == null) throw new ArgumentNullException("message");
             string collectionId = receivedIdentifyPillarsForDeleteFileRequest.CollectionID;
             string fileName = receivedIdentifyPillarsForDeleteFileRequest.FileID;
@@ -36,17 +37,17 @@ namespace PillarAPI.IdentifyResponses
                     }
                     else
                     {
-                        checksumType = (ChecksumType)Enum.Parse(typeof(ChecksumType), checksumsType.algorithm);
+                        checksumType = (ChecksumType) Enum.Parse(typeof (ChecksumType), checksumsType.algorithm);
                     }
                     start++;
                 }
             }
             Log.Debug(result);
             var checkType = new ChecksumSpec_TYPE
-                {
-                    ChecksumType = checksumType,
-                    OtherChecksumType = result
-                };
+                                {
+                                    ChecksumType = checksumType,
+                                    OtherChecksumType = result
+                                };
             var resInfo = new ResponseInfo();
             var timeType = new TimeMeasure_TYPE();
             if (!message.IsSerializedMessageValid)
@@ -58,11 +59,11 @@ namespace PillarAPI.IdentifyResponses
             }
             else
             {
-
                 if (!string.IsNullOrEmpty(f1.FileName))
                 {
                     resInfo.ResponseCode = ResponseCode.IDENTIFICATION_POSITIVE;
-                    resInfo.ResponseText = "Message request has been received and operation request is expected to be successful";
+                    resInfo.ResponseText =
+                        "Message request has been received and operation request is expected to be successful";
                     timeType.TimeMeasureUnit = TimeMeasureUnit.MILLISECONDS;
                     timeType.TimeMeasureValue = "3000";
                 }
@@ -75,21 +76,21 @@ namespace PillarAPI.IdentifyResponses
                 }
             }
             var responseObject = new IdentifyPillarsForDeleteFileResponse
-                {
-                    CollectionID = receivedIdentifyPillarsForDeleteFileRequest.CorrelationID,
-                    CorrelationID = receivedIdentifyPillarsForDeleteFileRequest.CorrelationID,
-                    Destination = receivedIdentifyPillarsForDeleteFileRequest.ReplyTo,
-                    FileID = receivedIdentifyPillarsForDeleteFileRequest.FileID,
-                    From = Pillar.GlobalPillarApiSettings.PILLAR_ID,
-                    minVersion = Pillar.GlobalPillarApiSettings.MIN_MESSAGE_XSD_VERSION,
-                    PillarChecksumSpec = checkType,
-                    PillarID = Pillar.GlobalPillarApiSettings.PILLAR_ID,
-                    ReplyTo = Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE,
-                    ResponseInfo = resInfo,
-                    TimeToDeliver = timeType,
-                    To = receivedIdentifyPillarsForDeleteFileRequest.From,
-                    version = Pillar.GlobalPillarApiSettings.XSD_VERSION
-                };
+                                     {
+                                         CollectionID = receivedIdentifyPillarsForDeleteFileRequest.CorrelationID,
+                                         CorrelationID = receivedIdentifyPillarsForDeleteFileRequest.CorrelationID,
+                                         Destination = receivedIdentifyPillarsForDeleteFileRequest.ReplyTo,
+                                         FileID = receivedIdentifyPillarsForDeleteFileRequest.FileID,
+                                         From = Pillar.GlobalPillarApiSettings.PILLAR_ID,
+                                         minVersion = Pillar.GlobalPillarApiSettings.MIN_MESSAGE_XSD_VERSION,
+                                         PillarChecksumSpec = checkType,
+                                         PillarID = Pillar.GlobalPillarApiSettings.PILLAR_ID,
+                                         ReplyTo = Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE,
+                                         ResponseInfo = resInfo,
+                                         TimeToDeliver = timeType,
+                                         To = receivedIdentifyPillarsForDeleteFileRequest.From,
+                                         version = Pillar.GlobalPillarApiSettings.XSD_VERSION
+                                     };
 
             new MessageInfoContainer(responseObject).Send();
         }

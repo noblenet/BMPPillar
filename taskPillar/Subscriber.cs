@@ -50,16 +50,18 @@ namespace PillarAPI
         public void Start(string consumerId)
         {
             ConsumerId = consumerId;
-            Consumer = _topic != null ? _session.CreateDurableConsumer(_topic, consumerId, "2 > 1", false) : _session.CreateConsumer(_destination, null, false);
+            Consumer = _topic != null
+                           ? _session.CreateDurableConsumer(_topic, consumerId, "2 > 1", false)
+                           : _session.CreateConsumer(_destination, null, false);
             Consumer.Listener += message =>
-                {
-                    var textMessage = message as ITextMessage;
-                    if (textMessage == null) throw new InvalidCastException();
-                    if (OnMessageReceived != null)
-                    {
-                        OnMessageReceived(textMessage);
-                    }
-                };
+                                     {
+                                         var textMessage = message as ITextMessage;
+                                         if (textMessage == null) throw new InvalidCastException();
+                                         if (OnMessageReceived != null)
+                                         {
+                                             OnMessageReceived(textMessage);
+                                         }
+                                     };
         }
     }
 }

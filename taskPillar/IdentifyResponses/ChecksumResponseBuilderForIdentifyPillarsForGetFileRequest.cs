@@ -1,10 +1,11 @@
 ﻿using System.Reflection;
-using log4net;
 using PillarAPI.Interfaces;
+using log4net;
 
 namespace PillarAPI.IdentifyResponses
 {
-    internal class ChecksumResponseBuilderForIdentifyPillarsForGetFileRequest : IResponseBuilderForIdentifyPillarsForGetFileRequest
+    internal class ChecksumResponseBuilderForIdentifyPillarsForGetFileRequest :
+        IResponseBuilderForIdentifyPillarsForGetFileRequest
     {
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 

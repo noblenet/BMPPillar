@@ -5,10 +5,10 @@ using System.Text;
 
 namespace PillarAPI.Utilities
 {
-    class StringManipulation
+    internal class StringManipulation
     {
         /// <summary>
-        /// Converts byte[] to string.
+        ///     Converts byte[] to string.
         /// </summary>
         /// <param name="buff">Byte[] to be converted</param>
         /// <exception cref="System.ArgumentNullException"></exception>
@@ -19,7 +19,7 @@ namespace PillarAPI.Utilities
         }
 
         /// <summary>
-        /// Converts string to byte[].
+        ///     Converts string to byte[].
         /// </summary>
         /// <param name="str">String to be converted</param>
         /// <exception cref="System.ArgumentNullException"></exception>
@@ -32,7 +32,7 @@ namespace PillarAPI.Utilities
         }
 
         /// <summary>
-        /// Converts byte[] to a base64 string.
+        ///     Converts byte[] to a base64 string.
         /// </summary>
         /// <param name="bytes">Byte[] to be converted</param>
         /// <exception cref="System.ArgumentNullException"></exception>
@@ -43,7 +43,7 @@ namespace PillarAPI.Utilities
         }
 
         /// <summary>
-        /// Converts string to a base64 byte[].
+        ///     Converts string to a base64 byte[].
         /// </summary>
         /// <param name="inputString"></param>
         /// <exception cref="System.ArgumentNullException"></exception>

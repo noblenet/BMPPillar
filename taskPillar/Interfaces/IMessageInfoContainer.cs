@@ -4,7 +4,6 @@ namespace PillarAPI.Interfaces
 {
     public interface IMessageInfoContainer
     {
-
         bool IsSerializedMessageValid { get; }
         string CorrelationId { get; }
         string Destination { get; }

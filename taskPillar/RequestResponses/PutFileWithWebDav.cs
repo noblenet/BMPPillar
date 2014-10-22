@@ -2,14 +2,14 @@
 using System.IO;
 using System.Reflection;
 using PetaPoco;
-using bmpxsd;
-using log4net;
 using PillarAPI.Enums;
 using PillarAPI.Interfaces;
 using PillarAPI.Models;
 using PillarAPI.Utilities;
 using StorageHandler;
 using WebdavTransfer;
+using bmpxsd;
+using log4net;
 
 namespace PillarAPI.RequestResponses
 {
@@ -31,7 +31,8 @@ namespace PillarAPI.RequestResponses
             {
                 var putFileFileInfoContainer = new FileInfoContainer(collectionId, fileName);
 
-                if (putFileFileInfoContainer.FileStates == FileStatesEnum.ExistingInDB || putFileFileInfoContainer.FileStates == FileStatesEnum.DeletedFromDB)
+                if (putFileFileInfoContainer.FileStates == FileStatesEnum.ExistingInDB ||
+                    putFileFileInfoContainer.FileStates == FileStatesEnum.DeletedFromDB)
                 {
                     UpdateFileInDB(putFileFileInfoContainer, receivedPutFileRequest);
                 }
@@ -52,17 +53,19 @@ namespace PillarAPI.RequestResponses
                 // DB insert fails, filetransfer is aborted.
                 Log.Error("PutFiles. DB transaction failed: ", e);
                 ExecuteNonQuerySqlTransactionFailed(receivedPutFileRequest);
-                Utilities.DBUtilities.CleanFilesFromDBIfLeftHanging();
+                DBUtilities.CleanFilesFromDBIfLeftHanging();
             }
         }
 
-        private static void UpdateFileInDB(FileInfoContainer putFileFileInfoContainer, PutFileRequest receivedPutFileRequest)
+        private static void UpdateFileInDB(FileInfoContainer putFileFileInfoContainer,
+                                           PutFileRequest receivedPutFileRequest)
         {
             // Stops filetransfer if file already exists
             if (putFileFileInfoContainer.FileStates != FileStatesEnum.ExistingInDB)
             {
                 // if DB update fails, filetransfer is aborted. - do we wanna try once more before quitting?
-                if (!UpdateFile(putFileFileInfoContainer.FileName, putFileFileInfoContainer.CollectionId)) ExecuteNonQuerySqlTransactionFailed(receivedPutFileRequest);
+                if (!UpdateFile(putFileFileInfoContainer.FileName, putFileFileInfoContainer.CollectionId))
+                    ExecuteNonQuerySqlTransactionFailed(receivedPutFileRequest);
             }
             else
             {
@@ -72,16 +75,16 @@ namespace PillarAPI.RequestResponses
 
         private static void ExecuteNonQuerySqlTransactionFailed(PutFileRequest receivedPutFileRequest)
         {
-            Utilities.DBUtilities.CleanFilesFromDBIfLeftHanging();
-              
+            DBUtilities.CleanFilesFromDBIfLeftHanging();
+
             var responseInfo = new ResponseInfo
-                {
-                    ResponseCode = ResponseCode.FAILURE,
-                    ResponseText = "PutFile failed"
-                };
+                                   {
+                                       ResponseCode = ResponseCode.FAILURE,
+                                       ResponseText = "PutFile failed"
+                                   };
             CollectedUtilities.InsertAudit(FileAction.PUT_FILE.ToString(), receivedPutFileRequest.From,
                                            receivedPutFileRequest.AuditTrailInformation, receivedPutFileRequest.FileID,
-                                           responseInfo.ResponseText,Pillar.GlobalPillarApiSettings.PILLAR_ID);
+                                           responseInfo.ResponseText, Pillar.GlobalPillarApiSettings.PILLAR_ID);
             PutFileReply(receivedPutFileRequest, responseInfo, null);
         }
 
@@ -89,17 +92,19 @@ namespace PillarAPI.RequestResponses
         {
             bool inserted = true;
 
-            using (var db = DatabaseConnection.GetConnection())
+            using (Database db = DatabaseConnection.GetConnection())
             {
                 var file = new FilePoco();
-                var userPoco = db.SingleOrDefault<FilePoco>(string.Format("SELECT user_id FROM users WHERE collection_id = '{0}'", collectionId));
+                var userPoco =
+                    db.SingleOrDefault<FilePoco>(string.Format("SELECT user_id FROM users WHERE collection_id = '{0}'",
+                                                               collectionId));
 
                 file.file_name = fileName;
                 file.user_id = userPoco.user_id;
 
                 try
                 {
-                    using (var trans = db.GetTransaction())
+                    using (ITransaction trans = db.GetTransaction())
                     {
                         db.Insert(file);
                         trans.Complete();
@@ -117,13 +122,13 @@ namespace PillarAPI.RequestResponses
         private static void DuplicateFileFailureResponse(PutFileRequest receivedPutFileRequest)
         {
             var responseInfo = new ResponseInfo
-                {
-                    ResponseCode = ResponseCode.DUPLICATE_FILE_FAILURE,
-                    ResponseText = "Duplicate FileID in put file request"
-                };
+                                   {
+                                       ResponseCode = ResponseCode.DUPLICATE_FILE_FAILURE,
+                                       ResponseText = "Duplicate FileID in put file request"
+                                   };
             CollectedUtilities.InsertAudit(FileAction.PUT_FILE.ToString(), receivedPutFileRequest.From,
                                            receivedPutFileRequest.AuditTrailInformation, receivedPutFileRequest.FileID,
-                                           responseInfo.ResponseText,Pillar.GlobalPillarApiSettings.PILLAR_ID);
+                                           responseInfo.ResponseText, Pillar.GlobalPillarApiSettings.PILLAR_ID);
             PutFileReply(receivedPutFileRequest, responseInfo, null);
         }
 
@@ -134,26 +139,33 @@ namespace PillarAPI.RequestResponses
             string fileName = receivedPutFileRequest.FileID;
             string collectionId = receivedPutFileRequest.CollectionID;
             IHandler storageHandler = new Handler(Pillar.GlobalPillarApiSettings.DRIVES4STORAGE);
-            var saveDir = storageHandler.GetNewLocation();
-            var filePath = Path.Combine(saveDir, receivedPutFileRequest.FileID);
+            string saveDir = storageHandler.GetNewLocation();
+            string filePath = Path.Combine(saveDir, receivedPutFileRequest.FileID);
             var filePathInfo = new FileInfo(filePath);
-            var webdavSettings = new WebdavTransferSettings(Pillar.GlobalPillarApiSettings.WEBDAV_IP_ADDRESS, Pillar.GlobalPillarApiSettings.WEBDAV_BASEFOLDERNAME, Pillar.GlobalPillarApiSettings.WEBDAV_CLIENT_CERTIFICATE_THUMBPRINT, Pillar.GlobalPillarApiSettings.USER_CERTIFICATES_STORE, Pillar.GlobalPillarApiSettings.WEBDAV_URI_SCHEME, Pillar.GlobalPillarApiSettings.WEBDAV_HTTP_PORT);
-           
+            var webdavSettings = new WebdavTransferSettings(Pillar.GlobalPillarApiSettings.WEBDAV_IP_ADDRESS,
+                                                            Pillar.GlobalPillarApiSettings.WEBDAV_BASEFOLDERNAME,
+                                                            Pillar.GlobalPillarApiSettings
+                                                                  .WEBDAV_CLIENT_CERTIFICATE_THUMBPRINT,
+                                                            Pillar.GlobalPillarApiSettings.USER_CERTIFICATES_STORE,
+                                                            Pillar.GlobalPillarApiSettings.WEBDAV_URI_SCHEME,
+                                                            Pillar.GlobalPillarApiSettings.WEBDAV_HTTP_PORT);
+
             IFileOperator fileOperator = new FileOperator(new ExecutorWithWebdav(webdavSettings));
-            var fileTranferResult = fileOperator.GetFile(receivedPutFileRequest.FileAddress, filePathInfo);
-            var folderDeleteResult = fileOperator.DeleteFolder(new UriBuilder(receivedPutFileRequest.FileAddress));
+            bool fileTranferResult = fileOperator.GetFile(receivedPutFileRequest.FileAddress, filePathInfo);
+            bool folderDeleteResult = fileOperator.DeleteFolder(new UriBuilder(receivedPutFileRequest.FileAddress));
             if (!fileTranferResult)
             {
                 throw new WTFException();
             }
             ChecksumDataForFile_TYPE receivedFileChkData = receivedPutFileRequest.ChecksumDataForNewFile;
-            ChecksumDataForFile_TYPE returnChecksumDataForFileType = ChecksumUtilities.CalculateChecksumDataForFileType(receivedFileChkData.ChecksumSpec, filePath);
+            ChecksumDataForFile_TYPE returnChecksumDataForFileType =
+                ChecksumUtilities.CalculateChecksumDataForFileType(receivedFileChkData.ChecksumSpec, filePath);
             var responseInfo = new ResponseInfo();
             try
             {
-         
                 // TODO - Validation should be done from MoveFileFromWebDavToLocalDirectory
-                if (XmlUtilities.ValidateFileChkSum(receivedFileChkData.ChecksumValue, returnChecksumDataForFileType.ChecksumValue))
+                if (XmlUtilities.ValidateFileChkSum(receivedFileChkData.ChecksumValue,
+                                                    returnChecksumDataForFileType.ChecksumValue))
                 {
                     SaveFileSpecInDb(fileName, collectionId, filePathInfo);
 
@@ -162,7 +174,9 @@ namespace PillarAPI.RequestResponses
                     // Tries to rename file to file_id.file_spec_id.filename
                     try
                     {
-                        var newFileName = Path.Combine(saveDir,string.Format("{0}.{1}.{2}", f1.FileId, f1.FileSpecId, receivedPutFileRequest.FileID));
+                        string newFileName = Path.Combine(saveDir,
+                                                          string.Format("{0}.{1}.{2}", f1.FileId, f1.FileSpecId,
+                                                                        receivedPutFileRequest.FileID));
                         storageHandler.RenameFile(filePathInfo, newFileName);
                     }
                     catch (IOException ex)
@@ -176,13 +190,16 @@ namespace PillarAPI.RequestResponses
                 }
                 else // File is not valid, delete file and set deleted in files to true.
                 {
-                    using (var db = DatabaseConnection.GetConnection())
+                    using (Database db = DatabaseConnection.GetConnection())
                     {
-                        using (var trans = db.GetTransaction())
+                        using (ITransaction trans = db.GetTransaction())
                         {
                             try
                             {
-                                var user = db.SingleOrDefault<dynamic>(Sql.Builder.Append("SELECT user_id FROM users WHERE collection_id = @0", collectionId));
+                                var user =
+                                    db.SingleOrDefault<dynamic>(
+                                        Sql.Builder.Append("SELECT user_id FROM users WHERE collection_id = @0",
+                                                           collectionId));
                                 db.Delete<FilePoco>("WHERE file_name = @0 and user_id = @1", fileName, user.user_id);
                                 trans.Complete();
                             }
@@ -201,14 +218,16 @@ namespace PillarAPI.RequestResponses
                     }
                 }
             }
-            // TODO - Move to method
+                // TODO - Move to method
             catch (Exception fileTransferError)
             {
                 Log.Error(fileTransferError);
                 // Cleans up after attempted filetransfer. DB - file_spec and files gets updated.
-                using (var db = DatabaseConnection.GetConnection())
+                using (Database db = DatabaseConnection.GetConnection())
                 {
-                    db.Execute("DELETE FROM files WHERE file_name = @0 and user_id = (SELECT user_id FROM users WHERE collection_id = @1)", fileName, collectionId);
+                    db.Execute(
+                        "DELETE FROM files WHERE file_name = @0 and user_id = (SELECT user_id FROM users WHERE collection_id = @1)",
+                        fileName, collectionId);
                 }
                 responseInfo.ResponseCode = ResponseCode.FILE_TRANSFER_FAILURE;
                 responseInfo.ResponseText = "PutFile failed";
@@ -224,17 +243,22 @@ namespace PillarAPI.RequestResponses
                 Log.Error("File transfer error: ", fileTransferError);
             }
             // TODO - Individual methods needs to call this.
-            CollectedUtilities.InsertAudit(FileAction.PUT_FILE.ToString(), receivedPutFileRequest.From, receivedPutFileRequest.AuditTrailInformation, receivedPutFileRequest.FileID, responseInfo.ResponseText,Pillar.GlobalPillarApiSettings.PILLAR_ID);
+            CollectedUtilities.InsertAudit(FileAction.PUT_FILE.ToString(), receivedPutFileRequest.From,
+                                           receivedPutFileRequest.AuditTrailInformation, receivedPutFileRequest.FileID,
+                                           responseInfo.ResponseText, Pillar.GlobalPillarApiSettings.PILLAR_ID);
         }
 
-        private static void SaveChecksumsIntoDb(string filePath, FileInfoContainer f1, ChecksumDataForFile_TYPE returnChecksumDataForFileType)
+        private static void SaveChecksumsIntoDb(string filePath, FileInfoContainer f1,
+                                                ChecksumDataForFile_TYPE returnChecksumDataForFileType)
         {
             ChecksumType requestedChecksumtype = returnChecksumDataForFileType.ChecksumSpec.ChecksumType;
-            var defaultChecksumType = (ChecksumType)Enum.Parse(typeof(ChecksumType),Pillar.GlobalPillarApiSettings.DEFAULT_CHECKSUM_TYPE);
+            var defaultChecksumType =
+                (ChecksumType) Enum.Parse(typeof (ChecksumType), Pillar.GlobalPillarApiSettings.DEFAULT_CHECKSUM_TYPE);
             if (requestedChecksumtype != defaultChecksumType)
             {
-                var defaultChecksumSpecType = new ChecksumSpec_TYPE { ChecksumType = defaultChecksumType };
-                ChecksumDataForFile_TYPE defaultChecksumDataForFileType = ChecksumUtilities.CalculateChecksumDataForFileType(defaultChecksumSpecType, filePath);
+                var defaultChecksumSpecType = new ChecksumSpec_TYPE {ChecksumType = defaultChecksumType};
+                ChecksumDataForFile_TYPE defaultChecksumDataForFileType =
+                    ChecksumUtilities.CalculateChecksumDataForFileType(defaultChecksumSpecType, filePath);
                 CollectedUtilities.InsertChecksum(int.Parse(f1.FileSpecId), defaultChecksumDataForFileType);
             }
             CollectedUtilities.InsertChecksum(int.Parse(f1.FileSpecId), returnChecksumDataForFileType);
@@ -242,16 +266,18 @@ namespace PillarAPI.RequestResponses
 
         private static bool UpdateFile(string fileName, string collectionId)
         {
-            var retval = true;
-            using (var db = DatabaseConnection.GetConnection())
+            bool retval = true;
+            using (Database db = DatabaseConnection.GetConnection())
             {
                 var file = new FilePoco();
 
-                var userPoco = db.SingleOrDefault<FilePoco>(Sql.Builder.Append("SELECT user_id FROM users WHERE collection_id = @0", collectionId));
+                var userPoco =
+                    db.SingleOrDefault<FilePoco>(Sql.Builder.Append(
+                        "SELECT user_id FROM users WHERE collection_id = @0", collectionId));
                 file.file_id = userPoco.file_id;
                 file.file_name = fileName;
                 file.deleted = Convert.ToBoolean(0);
-                using (var trans = db.GetTransaction())
+                using (ITransaction trans = db.GetTransaction())
                 {
                     try
                     {
@@ -272,9 +298,9 @@ namespace PillarAPI.RequestResponses
 
         private static void SaveFileSpecInDb(string fileName, string collectionId, FileInfo filePath)
         {
-            using (var db = DatabaseConnection.GetConnection())
+            using (Database db = DatabaseConnection.GetConnection())
             {
-                using (var trans = db.GetTransaction())
+                using (ITransaction trans = db.GetTransaction())
                 {
                     try
                     {
@@ -291,29 +317,30 @@ namespace PillarAPI.RequestResponses
             }
         }
 
-        private static void MakeFileSpecPoco(Database db, string fileName, string collectionId, FileInfo filePath2Sourcefile)
+        private static void MakeFileSpecPoco(Database db, string fileName, string collectionId,
+                                             FileInfo filePath2Sourcefile)
         {
             var filePoco = db.SingleOrDefault<FilePoco>(GetFileId(fileName, collectionId));
 
-           
+
             var fileSpec = new FileSpecPoco
-            {
-                active = true,
-                file_id = filePoco.file_id,
-                file_size = (int)filePath2Sourcefile.Length,
-                filepath = filePath2Sourcefile.DirectoryName
-            };
+                               {
+                                   active = true,
+                                   file_id = filePoco.file_id,
+                                   file_size = (int) filePath2Sourcefile.Length,
+                                   filepath = filePath2Sourcefile.DirectoryName
+                               };
             db.Insert(fileSpec);
         }
 
         private static Sql GetFileId(string fileName, string collectionId)
         {
-            var sqlstring = Sql.Builder
-                .Append("SELECT f.file_id from files f ")
-                .Append("LEFT JOIN users u ")
-                .Append("WHERE f.file_name = @0 ", fileName)
-                .Append("AND f.user_id = u.user_id ")
-                .Append("AND u.collection_id = @0", collectionId);
+            Sql sqlstring = Sql.Builder
+                               .Append("SELECT f.file_id from files f ")
+                               .Append("LEFT JOIN users u ")
+                               .Append("WHERE f.file_name = @0 ", fileName)
+                               .Append("AND f.user_id = u.user_id ")
+                               .Append("AND u.collection_id = @0", collectionId);
             return sqlstring;
         }
 
@@ -322,26 +349,27 @@ namespace PillarAPI.RequestResponses
         /// </summary>
         /// <param name="putFileRequestMessage"></param>
         /// <param name="responseInfo"> </param>
-        private static void PutFileReply(PutFileRequest putFileRequestMessage, ResponseInfo responseInfo, ChecksumDataForFile_TYPE ChecksumDataForNewFile)
+        private static void PutFileReply(PutFileRequest putFileRequestMessage, ResponseInfo responseInfo,
+                                         ChecksumDataForFile_TYPE ChecksumDataForNewFile)
         {
             var responseObject = new PutFileFinalResponse
-                {
-                    //ChecksumDataForExistingFile // If file already exists in repository - why god, WHY. We already have the integrityservice to take care of this.
-                    ChecksumDataForNewFile = ChecksumDataForNewFile,
-                    CollectionID = putFileRequestMessage.CollectionID,
-                    CorrelationID = putFileRequestMessage.CorrelationID,
-                    Destination = putFileRequestMessage.ReplyTo,
-                    FileAddress = putFileRequestMessage.FileAddress,
-                    FileID = putFileRequestMessage.FileID,
-                    From =Pillar.GlobalPillarApiSettings.PILLAR_ID,
-                    PillarChecksumSpec = putFileRequestMessage.ChecksumRequestForNewFile,
-                    PillarID =Pillar.GlobalPillarApiSettings.PILLAR_ID,
-                    ReplyTo =Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE,
-                    ResponseInfo = responseInfo,
-                    To = putFileRequestMessage.From,
-                    minVersion =Pillar.GlobalPillarApiSettings.MIN_MESSAGE_XSD_VERSION,
-                    version =Pillar.GlobalPillarApiSettings.XSD_VERSION
-                };
+                                     {
+                                         //ChecksumDataForExistingFile // If file already exists in repository - why god, WHY. We already have the integrityservice to take care of this.
+                                         ChecksumDataForNewFile = ChecksumDataForNewFile,
+                                         CollectionID = putFileRequestMessage.CollectionID,
+                                         CorrelationID = putFileRequestMessage.CorrelationID,
+                                         Destination = putFileRequestMessage.ReplyTo,
+                                         FileAddress = putFileRequestMessage.FileAddress,
+                                         FileID = putFileRequestMessage.FileID,
+                                         From = Pillar.GlobalPillarApiSettings.PILLAR_ID,
+                                         PillarChecksumSpec = putFileRequestMessage.ChecksumRequestForNewFile,
+                                         PillarID = Pillar.GlobalPillarApiSettings.PILLAR_ID,
+                                         ReplyTo = Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE,
+                                         ResponseInfo = responseInfo,
+                                         To = putFileRequestMessage.From,
+                                         minVersion = Pillar.GlobalPillarApiSettings.MIN_MESSAGE_XSD_VERSION,
+                                         version = Pillar.GlobalPillarApiSettings.XSD_VERSION
+                                     };
             if (ChecksumDataForNewFile != null) responseObject.ChecksumDataForNewFile = ChecksumDataForNewFile;
             new MessageInfoContainer(responseObject).Send();
         }

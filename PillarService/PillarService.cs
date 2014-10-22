@@ -45,7 +45,6 @@ namespace PillarService
                         (PillarTypeEnum)
                         Enum.Parse(typeof (PillarTypeEnum), ConfigurationManager.AppSettings["PillarType"]));
                 Task.Factory.StartNew(() => _piz.Initialize(pillarApiSettings));
-
             }
             catch (Exception ef)
             {

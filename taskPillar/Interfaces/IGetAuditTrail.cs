@@ -1,6 +1,6 @@
 ﻿namespace PillarAPI.Interfaces
 {
-public interface IGetAuditTrail
+    public interface IGetAuditTrail
     {
         void ProcessRequest(IMessageInfoContainer message);
     }

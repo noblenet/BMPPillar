@@ -25,7 +25,7 @@ namespace PillarAPI.Utilities
             }
             catch (Exception e)
             {
-                Log.Fatal(e); 
+                Log.Fatal(e);
             }
             return false;
         }
@@ -41,7 +41,7 @@ namespace PillarAPI.Utilities
             }
             catch (Exception e)
             {
-               Log.Fatal(e); 
+                Log.Fatal(e);
             }
             return false;
         }
@@ -57,7 +57,7 @@ namespace PillarAPI.Utilities
             }
             catch (Exception e)
             {
-                Log.Error(e); 
+                Log.Error(e);
             }
             return -1;
         }
@@ -73,7 +73,7 @@ namespace PillarAPI.Utilities
             }
             catch (Exception e)
             {
-                Log.Error(e); 
+                Log.Error(e);
             }
             return -1;
         }

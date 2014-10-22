@@ -3,7 +3,6 @@ using System.Reflection;
 using PetaPoco;
 using bmpxsd;
 using log4net;
-using PillarAPI.Models;
 
 namespace PillarAPI.IdentifyResponses
 {
@@ -14,7 +13,8 @@ namespace PillarAPI.IdentifyResponses
         public static void MakeResponse(MessageInfoContainer message)
         {
             Log.Debug("Making Identityresponce for GetFileID.. ");
-            var receivedIdentifyPillarsForGetFileIDsRequest = message.MessageObject as IdentifyPillarsForGetFileIDsRequest;
+            var receivedIdentifyPillarsForGetFileIDsRequest =
+                message.MessageObject as IdentifyPillarsForGetFileIDsRequest;
             if (receivedIdentifyPillarsForGetFileIDsRequest == null) throw new ArgumentNullException("message");
             string collectionId = receivedIdentifyPillarsForGetFileIDsRequest.CollectionID;
             var resInfo = new ResponseInfo();
@@ -30,7 +30,8 @@ namespace PillarAPI.IdentifyResponses
             }
             else
             {
-                if (!(receivedIdentifyPillarsForGetFileIDsRequest.FileIDs.Item.GetType() == typeof(Object))) // single file
+                if (!(receivedIdentifyPillarsForGetFileIDsRequest.FileIDs.Item.GetType() == typeof (Object)))
+                    // single file
                 {
                     string fileName = receivedIdentifyPillarsForGetFileIDsRequest.FileIDs.Item.ToString();
                     var f1 = new FileInfoContainer(collectionId, fileName);
@@ -38,7 +39,8 @@ namespace PillarAPI.IdentifyResponses
                     if (string.IsNullOrEmpty(f1.FileId))
                     {
                         resInfo.ResponseCode = ResponseCode.IDENTIFICATION_NEGATIVE;
-                        resInfo.ResponseText = "This Pillar does not contain the file with the requested fileId. File id request is not possible.";
+                        resInfo.ResponseText =
+                            "This Pillar does not contain the file with the requested fileId. File id request is not possible.";
                         timeType.TimeMeasureUnit = TimeMeasureUnit.HOURS;
                         timeType.TimeMeasureValue = "9999";
                     }
@@ -66,23 +68,22 @@ namespace PillarAPI.IdentifyResponses
                         timeType.TimeMeasureUnit = TimeMeasureUnit.MILLISECONDS;
                         timeType.TimeMeasureValue = "5000";
                     }
-
                 }
                 var responseObject = new IdentifyPillarsForGetFileIDsResponse
-                    {
-                        ResponseInfo = resInfo,
-                        CollectionID = receivedIdentifyPillarsForGetFileIDsRequest.CollectionID,
-                        CorrelationID = receivedIdentifyPillarsForGetFileIDsRequest.CorrelationID,
-                        Destination = receivedIdentifyPillarsForGetFileIDsRequest.ReplyTo,
-                        FileIDs = receivedIdentifyPillarsForGetFileIDsRequest.FileIDs,
-                        From =Pillar.GlobalPillarApiSettings.PILLAR_ID,
-                        minVersion =Pillar.GlobalPillarApiSettings.MIN_MESSAGE_XSD_VERSION,
-                        PillarID =Pillar.GlobalPillarApiSettings.PILLAR_ID,
-                        ReplyTo =Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE,
-                        TimeToDeliver = timeType,
-                        To = receivedIdentifyPillarsForGetFileIDsRequest.From,
-                        version =Pillar.GlobalPillarApiSettings.XSD_VERSION
-                    };
+                                         {
+                                             ResponseInfo = resInfo,
+                                             CollectionID = receivedIdentifyPillarsForGetFileIDsRequest.CollectionID,
+                                             CorrelationID = receivedIdentifyPillarsForGetFileIDsRequest.CorrelationID,
+                                             Destination = receivedIdentifyPillarsForGetFileIDsRequest.ReplyTo,
+                                             FileIDs = receivedIdentifyPillarsForGetFileIDsRequest.FileIDs,
+                                             From = Pillar.GlobalPillarApiSettings.PILLAR_ID,
+                                             minVersion = Pillar.GlobalPillarApiSettings.MIN_MESSAGE_XSD_VERSION,
+                                             PillarID = Pillar.GlobalPillarApiSettings.PILLAR_ID,
+                                             ReplyTo = Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE,
+                                             TimeToDeliver = timeType,
+                                             To = receivedIdentifyPillarsForGetFileIDsRequest.From,
+                                             version = Pillar.GlobalPillarApiSettings.XSD_VERSION
+                                         };
                 var mic = new MessageInfoContainer(responseObject);
                 Log.DebugFormat("MessageInfoContainer to send: \n{0}", mic.SerializedMessage);
                 mic.Send();
@@ -91,18 +92,18 @@ namespace PillarAPI.IdentifyResponses
 
         private static bool IsCollectionEmpty(string collectionId)
         {
-            var sqlstring = Sql.Builder
-                                .Append("SELECT COUNT(0) fs.archived, fs.file_id, fs.file_spec_id, f.file_name ")
-                                .Append("FROM file_specs fs, files f , users u ")
-                                .Append("WHERE u.collection_id = @0 ", collectionId)
-                                .Append("AND f.user_id = u.user_id ")
-                                .Append("AND fs.file_id = f.file_id ")
-                                .Append("AND f.deleted = 0 ")
-                                .Append("AND fs.active = 1");
+            Sql sqlstring = Sql.Builder
+                               .Append("SELECT COUNT(0) fs.archived, fs.file_id, fs.file_spec_id, f.file_name ")
+                               .Append("FROM file_specs fs, files f , users u ")
+                               .Append("WHERE u.collection_id = @0 ", collectionId)
+                               .Append("AND f.user_id = u.user_id ")
+                               .Append("AND fs.file_id = f.file_id ")
+                               .Append("AND f.deleted = 0 ")
+                               .Append("AND fs.active = 1");
 
             try
             {
-                using (var db = DatabaseConnection.GetConnection())
+                using (Database db = DatabaseConnection.GetConnection())
                 {
                     return db.Single<int>(sqlstring) == 0;
                 }

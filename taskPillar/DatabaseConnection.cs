@@ -15,7 +15,8 @@ namespace PillarAPI
             Log.Debug("Connecting to the Database...");
             try
             {
-                using (var db = new Database(Pillar.GlobalPillarApiSettings.SQLITE_CONNECTION_STRING , new SQLiteFactory()))
+                using (
+                    var db = new Database(Pillar.GlobalPillarApiSettings.SQLITE_CONNECTION_STRING, new SQLiteFactory()))
                 {
                     db.OpenSharedConnection();
                     db.EnableAutoSelect = true;

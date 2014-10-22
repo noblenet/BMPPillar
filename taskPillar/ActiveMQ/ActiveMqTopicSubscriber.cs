@@ -56,22 +56,22 @@ namespace PillarAPI.ActiveMQ
             Consumer = _session.CreateDurableConsumer(_topic, consumerId, null, false);
             Log.Debug("Setter listener");
             Consumer.Listener += message =>
-                {
-                    var textMessage = message as ITextMessage;
-                    try
-                    {
-                        if (textMessage == null) throw new InvalidCastException();
-                        if (OnMessageReceived == null) return;
-                        message.Acknowledge();
-                        Log.Debug("Message has been acknowledged");
-                        OnMessageReceived(textMessage);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex.Message, ex);
-                        throw;
-                    }
-                };
+                                     {
+                                         var textMessage = message as ITextMessage;
+                                         try
+                                         {
+                                             if (textMessage == null) throw new InvalidCastException();
+                                             if (OnMessageReceived == null) return;
+                                             message.Acknowledge();
+                                             Log.Debug("Message has been acknowledged");
+                                             OnMessageReceived(textMessage);
+                                         }
+                                         catch (Exception ex)
+                                         {
+                                             Log.Error(ex.Message, ex);
+                                             throw;
+                                         }
+                                     };
             Log.Debug("Exit");
         }
     }

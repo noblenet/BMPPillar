@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using PetaPoco;
-using bmpxsd;
-using log4net;
 using PillarAPI.Interfaces;
 using PillarAPI.Models;
+using bmpxsd;
+using log4net;
 
 namespace PillarAPI.RequestResponses
 {
@@ -16,14 +17,14 @@ namespace PillarAPI.RequestResponses
 
         public void ProcessRequest(IMessageInfoContainer message)
         {
-
             var receivedGetAuditTrailsRequest = message.MessageObject as GetAuditTrailsRequest;
             var responseInfo = new ResponseInfo();
             if (receivedGetAuditTrailsRequest != null)
             {
                 bool whereBool = true;
-                var sql = Sql.Builder
-                .Append("SELECT actionDateTime, actionOnFile, actorOnFile, auditTrailInformation, fileName, info, reportingComponent, sequenceNumber, file_id FROM Audit");
+                Sql sql = Sql.Builder
+                             .Append(
+                                 "SELECT actionDateTime, actionOnFile, actorOnFile, auditTrailInformation, fileName, info, reportingComponent, sequenceNumber, file_id FROM Audit");
 
                 if (!string.IsNullOrEmpty(receivedGetAuditTrailsRequest.FileID))
                 {
@@ -33,47 +34,63 @@ namespace PillarAPI.RequestResponses
 
                 if (receivedGetAuditTrailsRequest.MinTimestampSpecified)
                 {
-                    sql.Append(whereBool ? "WHERE actionDateTIme >= @0" : "AND actionDateTIme >= @0 ", receivedGetAuditTrailsRequest.MinTimestamp);
+                    sql.Append(whereBool ? "WHERE actionDateTIme >= @0" : "AND actionDateTIme >= @0 ",
+                               receivedGetAuditTrailsRequest.MinTimestamp);
                 }
 
                 if (receivedGetAuditTrailsRequest.MaxTimestampSpecified)
                 {
-                    sql.Append(whereBool ? "WHERE actionDateTIme <= @0 " : "AND actionDateTIme <= @0 ", receivedGetAuditTrailsRequest.MaxTimestamp);
+                    sql.Append(whereBool ? "WHERE actionDateTIme <= @0 " : "AND actionDateTIme <= @0 ",
+                               receivedGetAuditTrailsRequest.MaxTimestamp);
                 }
 
                 if (!string.IsNullOrEmpty(receivedGetAuditTrailsRequest.MinSequenceNumber))
                 {
-                    sql.Append(whereBool ? "WHERE sequenceNumber >= @0" : "AND sequenceNumber >= @0 ", receivedGetAuditTrailsRequest.MinSequenceNumber);
+                    sql.Append(whereBool ? "WHERE sequenceNumber >= @0" : "AND sequenceNumber >= @0 ",
+                               receivedGetAuditTrailsRequest.MinSequenceNumber);
                 }
 
                 if (!string.IsNullOrEmpty(receivedGetAuditTrailsRequest.MaxSequenceNumber))
                 {
-                    sql.Append(whereBool ? "WHERE sequenceNumber <= @0" : "AND sequenceNumber <= @0", receivedGetAuditTrailsRequest.MaxSequenceNumber);
+                    sql.Append(whereBool ? "WHERE sequenceNumber <= @0" : "AND sequenceNumber <= @0",
+                               receivedGetAuditTrailsRequest.MaxSequenceNumber);
                 }
                 AuditTrailEvent[] auditTrailEventContainer;
 
-                using (var db = DatabaseConnection.GetConnection())
+                using (Database db = DatabaseConnection.GetConnection())
                 {
                     try
                     {
-                        var auditPocos = db.Query<AuditPoco>(sql);
-                        var rowCount = auditPocos.Count();
+                        IEnumerable<AuditPoco> auditPocos = db.Query<AuditPoco>(sql);
+                        int rowCount = auditPocos.Count();
                         auditTrailEventContainer = new AuditTrailEvent[rowCount];
                         if (auditPocos.Any())
                         {
                             int rowPointer = 0;
-                            foreach (var auditTrailEvent in from AuditPoco audit in auditPocos
-                                                            select new AuditTrailEvent
-                                                                {
-                                                                    ActionDateTime = audit.actionDateTime,
-                                                                    ActionOnFile = (FileAction)Enum.Parse(typeof(FileAction), audit.actionOnFile),
-                                                                    ActorOnFile = audit.actorOnFile,
-                                                                    AuditTrailInformation = audit.auditTrailInformation,
-                                                                    FileID = audit.file_id.ToString(CultureInfo.InvariantCulture),
-                                                                    Info = audit.info,
-                                                                    ReportingComponent = audit.reportingComponent,
-                                                                    SequenceNumber = audit.sequenceNumber.ToString()
-                                                                })
+                            foreach (AuditTrailEvent auditTrailEvent in from AuditPoco audit in auditPocos
+                                                                        select new AuditTrailEvent
+                                                                                   {
+                                                                                       ActionDateTime =
+                                                                                           audit.actionDateTime,
+                                                                                       ActionOnFile =
+                                                                                           (FileAction)
+                                                                                           Enum.Parse(
+                                                                                               typeof (FileAction),
+                                                                                               audit.actionOnFile),
+                                                                                       ActorOnFile = audit.actorOnFile,
+                                                                                       AuditTrailInformation =
+                                                                                           audit.auditTrailInformation,
+                                                                                       FileID =
+                                                                                           audit.file_id.ToString(
+                                                                                               CultureInfo
+                                                                                                   .InvariantCulture),
+                                                                                       Info = audit.info,
+                                                                                       ReportingComponent =
+                                                                                           audit.reportingComponent,
+                                                                                       SequenceNumber =
+                                                                                           audit.sequenceNumber.ToString
+                                                                                           ()
+                                                                                   })
                             {
                                 auditTrailEventContainer[rowPointer] = auditTrailEvent;
                                 rowPointer++;
@@ -82,7 +99,8 @@ namespace PillarAPI.RequestResponses
                         else
                         {
                             responseInfo.ResponseCode = ResponseCode.OPERATION_COMPLETED;
-                            responseInfo.ResponseText = "Audittrail request completed successfully. But no audit matches specified request.";
+                            responseInfo.ResponseText =
+                                "Audittrail request completed successfully. But no audit matches specified request.";
                             GetAuditTrailReply(receivedGetAuditTrailsRequest, responseInfo, null);
                             return;
                         }
@@ -99,7 +117,7 @@ namespace PillarAPI.RequestResponses
 
                 responseInfo.ResponseCode = ResponseCode.OPERATION_COMPLETED;
                 responseInfo.ResponseText = "Audittrail request completed successfully";
-                var auditTrailEvents = new AuditTrailEvents { AuditTrailEvent = auditTrailEventContainer };
+                var auditTrailEvents = new AuditTrailEvents {AuditTrailEvent = auditTrailEventContainer};
                 ResultingAuditTrails resultingAuditTrails;
                 if (string.IsNullOrEmpty(receivedGetAuditTrailsRequest.ResultAddress))
                 {
@@ -113,24 +131,25 @@ namespace PillarAPI.RequestResponses
             }
         }
 
-        private static void GetAuditTrailReply(GetAuditTrailsRequest receivedGetAuditTrailsRequest, ResponseInfo responseInfo, ResultingAuditTrails resultingAuditTrails)
+        private static void GetAuditTrailReply(GetAuditTrailsRequest receivedGetAuditTrailsRequest,
+                                               ResponseInfo responseInfo, ResultingAuditTrails resultingAuditTrails)
         {
-            GetAuditTrailsFinalResponse responseObject = new GetAuditTrailsFinalResponse
-            {
-                CollectionID = receivedGetAuditTrailsRequest.CollectionID,
-                Contributor =Pillar.GlobalPillarApiSettings.PILLAR_ID,
-                CorrelationID = receivedGetAuditTrailsRequest.CorrelationID,
-                Destination = receivedGetAuditTrailsRequest.ReplyTo,
-                From =Pillar.GlobalPillarApiSettings.PILLAR_ID,
-                ReplyTo =Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE,
-                ResponseInfo = responseInfo,
-                To = receivedGetAuditTrailsRequest.From,
-                minVersion =Pillar.GlobalPillarApiSettings.MIN_MESSAGE_XSD_VERSION,
-                version =Pillar.GlobalPillarApiSettings.XSD_VERSION,
-                PartialResult = false,
-                PartialResultSpecified = false,
-                ResultingAuditTrails = resultingAuditTrails
-            };
+            var responseObject = new GetAuditTrailsFinalResponse
+                                     {
+                                         CollectionID = receivedGetAuditTrailsRequest.CollectionID,
+                                         Contributor = Pillar.GlobalPillarApiSettings.PILLAR_ID,
+                                         CorrelationID = receivedGetAuditTrailsRequest.CorrelationID,
+                                         Destination = receivedGetAuditTrailsRequest.ReplyTo,
+                                         From = Pillar.GlobalPillarApiSettings.PILLAR_ID,
+                                         ReplyTo = Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE,
+                                         ResponseInfo = responseInfo,
+                                         To = receivedGetAuditTrailsRequest.From,
+                                         minVersion = Pillar.GlobalPillarApiSettings.MIN_MESSAGE_XSD_VERSION,
+                                         version = Pillar.GlobalPillarApiSettings.XSD_VERSION,
+                                         PartialResult = false,
+                                         PartialResultSpecified = false,
+                                         ResultingAuditTrails = resultingAuditTrails
+                                     };
 
             var returnMessage = new MessageInfoContainer(responseObject);
             returnMessage.Send();

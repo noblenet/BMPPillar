@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using PetaPoco;
 using log4net;
 
 namespace PillarAPI.Utilities
@@ -9,30 +10,14 @@ namespace PillarAPI.Utilities
     {
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        /// <summary>
-        /// Cleans the files from database if left hanging.
-        /// </summary>
-        /// <exception cref="System.NotImplementedException"></exception>
-        public static void CleanFilesFromDBIfLeftHanging()
-        {
-            using (var db = DatabaseConnection.GetConnection())
-            {
-                using (var trans = db.GetTransaction())
-                {
-                    var result = db.Execute("DELETE FROM FILES WHERE file_id NOT IN (SELECT file_id FROM file_specs)");
-                    Log.DebugFormat("Cleaning up the database for files without file_spec. Delete {0} entries",result);
-                    trans.Complete();
-                }
-            }
-        }
-
         public static IEnumerable<string> TableNames
         {
             get
             {
-                  using (var db = DatabaseConnection.GetConnection())
-            {return db.Query<string>("SELECT name FROM sqlite_master WHERE type='table';");
-            }
+                using (Database db = DatabaseConnection.GetConnection())
+                {
+                    return db.Query<string>("SELECT name FROM sqlite_master WHERE type='table';");
+                }
             }
         }
 
@@ -40,7 +25,7 @@ namespace PillarAPI.Utilities
         {
             get
             {
-                using (var db = DatabaseConnection.GetConnection())
+                using (Database db = DatabaseConnection.GetConnection())
                 {
                     foreach (string tableName in TableNames)
                     {
@@ -54,9 +39,26 @@ namespace PillarAPI.Utilities
             }
         }
 
+        /// <summary>
+        ///     Cleans the files from database if left hanging.
+        /// </summary>
+        /// <exception cref="System.NotImplementedException"></exception>
+        public static void CleanFilesFromDBIfLeftHanging()
+        {
+            using (Database db = DatabaseConnection.GetConnection())
+            {
+                using (ITransaction trans = db.GetTransaction())
+                {
+                    int result = db.Execute("DELETE FROM FILES WHERE file_id NOT IN (SELECT file_id FROM file_specs)");
+                    Log.DebugFormat("Cleaning up the database for files without file_spec. Delete {0} entries", result);
+                    trans.Complete();
+                }
+            }
+        }
+
         public static string PrintInfo()
         {
-            var tableCount = 0;
+            int tableCount = 0;
             var sb = new StringBuilder();
             sb.AppendLine("Info about tables in the DB:");
             foreach (var keyValuePair in RowCounts)

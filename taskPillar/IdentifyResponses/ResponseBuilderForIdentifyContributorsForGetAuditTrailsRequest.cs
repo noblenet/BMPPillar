@@ -7,7 +7,8 @@ namespace PillarAPI.IdentifyResponses
     {
         public static void MakeResponse(MessageInfoContainer message)
         {
-            var receivedIdentifyPillarsForDeleteFileRequest = message.MessageObject as IdentifyContributorsForGetAuditTrailsRequest;
+            var receivedIdentifyPillarsForDeleteFileRequest =
+                message.MessageObject as IdentifyContributorsForGetAuditTrailsRequest;
             if (receivedIdentifyPillarsForDeleteFileRequest == null) throw new ArgumentNullException("message");
             var resInfo = new ResponseInfo();
             if (!message.IsSerializedMessageValid)
@@ -23,17 +24,17 @@ namespace PillarAPI.IdentifyResponses
                 resInfo.ResponseText = "Ready for GetAuditTrailsRequest";
             }
             var responseObject = new IdentifyContributorsForGetAuditTrailsResponse
-                    {
-                        CollectionID = receivedIdentifyPillarsForDeleteFileRequest.CollectionID,
-                        CorrelationID = receivedIdentifyPillarsForDeleteFileRequest.CorrelationID,
-                        Destination = receivedIdentifyPillarsForDeleteFileRequest.ReplyTo,
-                        From = Pillar.GlobalPillarApiSettings.PILLAR_ID,
-                        ReplyTo = Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE,
-                        ResponseInfo = resInfo,
-                        To = receivedIdentifyPillarsForDeleteFileRequest.From,
-                        minVersion = Pillar.GlobalPillarApiSettings.MIN_MESSAGE_XSD_VERSION,
-                        version = Pillar.GlobalPillarApiSettings.XSD_VERSION
-                    };
+                                     {
+                                         CollectionID = receivedIdentifyPillarsForDeleteFileRequest.CollectionID,
+                                         CorrelationID = receivedIdentifyPillarsForDeleteFileRequest.CorrelationID,
+                                         Destination = receivedIdentifyPillarsForDeleteFileRequest.ReplyTo,
+                                         From = Pillar.GlobalPillarApiSettings.PILLAR_ID,
+                                         ReplyTo = Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE,
+                                         ResponseInfo = resInfo,
+                                         To = receivedIdentifyPillarsForDeleteFileRequest.From,
+                                         minVersion = Pillar.GlobalPillarApiSettings.MIN_MESSAGE_XSD_VERSION,
+                                         version = Pillar.GlobalPillarApiSettings.XSD_VERSION
+                                     };
             new MessageInfoContainer(responseObject).Send();
         }
     }

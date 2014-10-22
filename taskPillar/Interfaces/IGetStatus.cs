@@ -1,6 +1,6 @@
 ﻿namespace PillarAPI.Interfaces
 {
-public interface IGetStatus
+    public interface IGetStatus
     {
         void ProcessRequest(IMessageInfoContainer message);
     }

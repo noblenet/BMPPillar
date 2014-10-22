@@ -1,6 +1,6 @@
 ﻿namespace PillarAPI.Interfaces
 {
-    interface IDeleteFile
+    internal interface IDeleteFile
     {
         void ProcessRequest(IMessageInfoContainer message);
     }

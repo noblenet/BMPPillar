@@ -11,7 +11,14 @@ namespace PillarAPI.Utilities
 
         public static ChecksumSpec_TYPE ChecksumSpecTypeSet()
         {
-            var checksumSpecType = new ChecksumSpec_TYPE {ChecksumType = (ChecksumType) Enum.Parse(typeof (ChecksumType), Pillar.GlobalPillarApiSettings.DEFAULT_CHECKSUM_TYPE)};
+            var checksumSpecType = new ChecksumSpec_TYPE
+                                       {
+                                           ChecksumType =
+                                               (ChecksumType)
+                                               Enum.Parse(typeof (ChecksumType),
+                                                          Pillar.GlobalPillarApiSettings
+                                                                .DEFAULT_CHECKSUM_TYPE)
+                                       };
             return checksumSpecType;
         }
 
@@ -28,7 +35,8 @@ namespace PillarAPI.Utilities
             return checksumSpecType;
         }
 
-        public static ChecksumSpec_TYPE ChecksumSpecTypeSet(byte[] salt, ChecksumType checksumType, string otherChecksumType)
+        public static ChecksumSpec_TYPE ChecksumSpecTypeSet(byte[] salt, ChecksumType checksumType,
+                                                            string otherChecksumType)
         {
             var checksumSpecType = new ChecksumSpec_TYPE {ChecksumType = checksumType};
             if (salt != null) checksumSpecType.ChecksumSalt = salt;
@@ -43,14 +51,16 @@ namespace PillarAPI.Utilities
             return checksumSpecType;
         }
 
-        public static ChecksumDataForFile_TYPE CalculateChecksumDataForFileType(ChecksumSpec_TYPE receivedChkSpkType, string filepath)
+        public static ChecksumDataForFile_TYPE CalculateChecksumDataForFileType(ChecksumSpec_TYPE receivedChkSpkType,
+                                                                                string filepath)
         {
             var returnChecksumDataForFileType = new ChecksumDataForFile_TYPE
-                {
-                    CalculationTimestamp = DateTime.Parse(DateTime.Now.ToString("s")),
-                    ChecksumSpec = receivedChkSpkType,
-                    ChecksumValue = CalculateChecksum(receivedChkSpkType, filepath)
-                };
+                                                    {
+                                                        CalculationTimestamp =
+                                                            DateTime.Parse(DateTime.Now.ToString("s")),
+                                                        ChecksumSpec = receivedChkSpkType,
+                                                        ChecksumValue = CalculateChecksum(receivedChkSpkType, filepath)
+                                                    };
             return returnChecksumDataForFileType;
         }
 

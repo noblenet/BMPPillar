@@ -1,18 +1,18 @@
-﻿using System.ServiceProcess;
+﻿using System.Threading;
 
 namespace PillarService
 {
-    static class Program
+    internal static class Program
     {
         /// <summary>
-        /// The main entry point for the application.
+        ///     The main entry point for the application.
         /// </summary>
-        static void Main()
+        private static void Main()
         {
 #if DEBUG
             var pillarService = new PillarService();
             pillarService.OnDebug();
-            System.Threading.Thread.Sleep(System.Threading.Timeout.Infinite);
+            Thread.Sleep(Timeout.Infinite);
 #else
 
             ServiceBase[] ServicesToRun;

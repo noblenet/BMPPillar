@@ -5,21 +5,21 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Xml;
 using Apache.NMS;
-using bmpxsd;
-using log4net;
 using PillarAPI.ActiveMQ;
 using PillarAPI.CustomExceptions;
 using PillarAPI.Interfaces;
 using PillarAPI.Utilities;
+using bmpxsd;
+using log4net;
 
 namespace PillarAPI
 {
-    
     public class MessageInfoContainer : IMessageInfoContainer, IDisposable
     {
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         #region Constructors
+
         public MessageInfoContainer(IdentifyPillarsForPutFileResponse message)
         {
             InitWithObject(message);
@@ -109,7 +109,8 @@ namespace PillarAPI
         public MessageInfoContainer(GetFileFinalResponse message)
         {
             InitWithObject(message);
-        } 
+        }
+
         #endregion
 
         private ResponseInfo ResponseInfoField { get; set; }
@@ -128,6 +129,11 @@ namespace PillarAPI
 
         #endregion
 
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+
         private void InitWithObject(object message)
         {
             var generalMessage = message as Message;
@@ -140,7 +146,8 @@ namespace PillarAPI
             MessageObject = message;
             SignedMessage = signMessage();
             SetResponseInfo(message);
-            if (generalMessage != null) IsFromValidCollection = generalMessage.CollectionID.Equals(Pillar.GlobalPillarApiSettings.COLLECTION_ID);
+            if (generalMessage != null)
+                IsFromValidCollection = generalMessage.CollectionID.Equals(Pillar.GlobalPillarApiSettings.COLLECTION_ID);
             Log.Debug("Message: " + message);
         }
 
@@ -149,7 +156,7 @@ namespace PillarAPI
         {
             const string namespace4Types = "bmpxsd";
             MessageTypeName = FindMsgtype(message);
-            var typeName = namespace4Types + "." + MessageTypeName;
+            string typeName = namespace4Types + "." + MessageTypeName;
             MessageType = Type.GetType(typeName);
             MessageObject = SerializationUtilities.DeserializeObject(message.Text, MessageType);
             var generalMessage = MessageObject as Message;
@@ -159,7 +166,8 @@ namespace PillarAPI
             IsSerializedMessageValid = SerializationUtilities.ValidateXmlMessage(SerializedMessage);
             SignedMessage = signMessage();
             SetResponseInfo(message);
-            if (generalMessage != null) IsFromValidCollection = generalMessage.CollectionID.Equals(Pillar.GlobalPillarApiSettings.COLLECTION_ID);
+            if (generalMessage != null)
+                IsFromValidCollection = generalMessage.CollectionID.Equals(Pillar.GlobalPillarApiSettings.COLLECTION_ID);
             Log.Debug("Message: " + message);
         }
 
@@ -223,19 +231,18 @@ namespace PillarAPI
         {
             try
             {
-                X509Certificate2 privateCertificate = CmsMessageUtilities.GetCertificate(Pillar.GlobalPillarApiSettings.USER_CERTIFICATES_STORE, Pillar.GlobalPillarApiSettings.PRIVATE_CERTIFICATE_THUMBPRINT);
+                X509Certificate2 privateCertificate =
+                    CmsMessageUtilities.GetCertificate(Pillar.GlobalPillarApiSettings.USER_CERTIFICATES_STORE,
+                                                       Pillar.GlobalPillarApiSettings.PRIVATE_CERTIFICATE_THUMBPRINT);
                 return CmsMessageUtilities.CmsMessageSigner(privateCertificate, SerializedMessage);
             }
             catch (Exception e)
             {
-                Log.ErrorFormat("Error signing message. There might be something wrong with the PRIVATE_CERTIFICATES_STORE name or the certificate is missing.");
-                throw new SigningVerifyingMessageException("Error signing message. Check the certificate and/or the trust store.", e);
+                Log.ErrorFormat(
+                    "Error signing message. There might be something wrong with the PRIVATE_CERTIFICATES_STORE name or the certificate is missing.");
+                throw new SigningVerifyingMessageException(
+                    "Error signing message. Check the certificate and/or the trust store.", e);
             }
-        }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
         }
     }
 }

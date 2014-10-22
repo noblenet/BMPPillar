@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using bmpxsd;
 using PillarAPI.Models;
 using PillarAPI.Utilities;
+using bmpxsd;
 
 namespace PillarAPI.IdentifyResponses
 {
@@ -11,7 +11,8 @@ namespace PillarAPI.IdentifyResponses
     {
         public static void MakeResponse(MessageInfoContainer message)
         {
-            var receivedIdentifyPillarsForReplaceFileRequest = message.MessageObject as IdentifyPillarsForReplaceFileRequest;
+            var receivedIdentifyPillarsForReplaceFileRequest =
+                message.MessageObject as IdentifyPillarsForReplaceFileRequest;
             if (receivedIdentifyPillarsForReplaceFileRequest == null) throw new ArgumentNullException("message");
             string collectionId = receivedIdentifyPillarsForReplaceFileRequest.CollectionID;
             string fileName = receivedIdentifyPillarsForReplaceFileRequest.FileID;
@@ -65,29 +66,29 @@ namespace PillarAPI.IdentifyResponses
                     }
                     else
                     {
-                        checksumType = (ChecksumType)Enum.Parse(typeof(ChecksumType), checksumsType.algorithm);
+                        checksumType = (ChecksumType) Enum.Parse(typeof (ChecksumType), checksumsType.algorithm);
                     }
                     start++;
                 }
             }
-            var chkSpcType = new ChecksumSpec_TYPE { ChecksumType = checksumType, OtherChecksumType = otherChecksumTypes };
+            var chkSpcType = new ChecksumSpec_TYPE {ChecksumType = checksumType, OtherChecksumType = otherChecksumTypes};
 
             var responseObject = new IdentifyPillarsForReplaceFileResponse
-                {
-                    CollectionID = receivedIdentifyPillarsForReplaceFileRequest.CollectionID,
-                    CorrelationID = receivedIdentifyPillarsForReplaceFileRequest.CorrelationID,
-                    Destination = receivedIdentifyPillarsForReplaceFileRequest.ReplyTo,
-                    FileID = receivedIdentifyPillarsForReplaceFileRequest.FileID,
-                    From =Pillar.GlobalPillarApiSettings.PILLAR_ID,
-                    PillarChecksumSpec = chkSpcType,
-                    PillarID =Pillar.GlobalPillarApiSettings.PILLAR_ID,
-                    ReplyTo =Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE,
-                    ResponseInfo = resInfo,
-                    TimeToDeliver = timeType,
-                    To = receivedIdentifyPillarsForReplaceFileRequest.From,
-                    minVersion =Pillar.GlobalPillarApiSettings.MIN_MESSAGE_XSD_VERSION,
-                    version =Pillar.GlobalPillarApiSettings.XSD_VERSION
-                };
+                                     {
+                                         CollectionID = receivedIdentifyPillarsForReplaceFileRequest.CollectionID,
+                                         CorrelationID = receivedIdentifyPillarsForReplaceFileRequest.CorrelationID,
+                                         Destination = receivedIdentifyPillarsForReplaceFileRequest.ReplyTo,
+                                         FileID = receivedIdentifyPillarsForReplaceFileRequest.FileID,
+                                         From = Pillar.GlobalPillarApiSettings.PILLAR_ID,
+                                         PillarChecksumSpec = chkSpcType,
+                                         PillarID = Pillar.GlobalPillarApiSettings.PILLAR_ID,
+                                         ReplyTo = Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE,
+                                         ResponseInfo = resInfo,
+                                         TimeToDeliver = timeType,
+                                         To = receivedIdentifyPillarsForReplaceFileRequest.From,
+                                         minVersion = Pillar.GlobalPillarApiSettings.MIN_MESSAGE_XSD_VERSION,
+                                         version = Pillar.GlobalPillarApiSettings.XSD_VERSION
+                                     };
 
             new MessageInfoContainer(responseObject).Send();
         }

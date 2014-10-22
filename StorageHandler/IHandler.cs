@@ -1,7 +1,7 @@
-﻿namespace StorageHandler
-{
-    using System.IO;
+﻿using System.IO;
 
+namespace StorageHandler
+{
     public interface IHandler
     {
         #region Methods
@@ -17,7 +17,5 @@
         //void MoveFile(FileInfo aFileInfo, Path );
 
         #endregion Other
-
-
     }
 }

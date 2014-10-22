@@ -7,15 +7,16 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using PetaPoco;
+using PillarAPI.Models;
 using bmpxsd;
 using log4net;
-using PillarAPI.Models;
 
 namespace PillarAPI.Utilities
 {
     public class CollectedUtilities
     {
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public static Object DeserializeObject(string serializedObject, Type objectType)
         {
             var xs = new XmlSerializer(objectType);
@@ -31,14 +32,14 @@ namespace PillarAPI.Utilities
             {
                 var utf = new UTF8Encoding(false);
                 var settings = new XmlWriterSettings
-                    {
-                        Encoding = utf,
-                        Indent = true,
-                        IndentChars = "  ",
-                        NewLineChars = Environment.NewLine,
-                        ConformanceLevel = ConformanceLevel.Document,
-                        OmitXmlDeclaration = false
-                    };
+                                   {
+                                       Encoding = utf,
+                                       Indent = true,
+                                       IndentChars = "  ",
+                                       NewLineChars = Environment.NewLine,
+                                       ConformanceLevel = ConformanceLevel.Document,
+                                       OmitXmlDeclaration = false
+                                   };
 
                 using (XmlWriter writer = XmlWriter.Create(ms, settings))
                 {
@@ -78,7 +79,7 @@ namespace PillarAPI.Utilities
         public static IEnumerable<ChecksumsTypePoco> GetPillarChecksumTypes()
         {
             IEnumerable<ChecksumsTypePoco> algorithms = null;
-            using (var db = DatabaseConnection.GetConnection())
+            using (Database db = DatabaseConnection.GetConnection())
             {
                 try
                 {
@@ -93,21 +94,25 @@ namespace PillarAPI.Utilities
             return algorithms;
         }
 
-        public static ChecksumDataForFile_TYPE GetLatestChecksum(string collectionId, string fileName, ChecksumSpec_TYPE chkSpkTypeForFile)
+        public static ChecksumDataForFile_TYPE GetLatestChecksum(string collectionId, string fileName,
+                                                                 ChecksumSpec_TYPE chkSpkTypeForFile)
         {
-            var pocoString = chkSpkTypeForFile.ChecksumSalt == null ? PocoStringWithoutSalt(collectionId, fileName, chkSpkTypeForFile) : PocoStringWithSalt(collectionId, fileName, chkSpkTypeForFile);
+            Sql pocoString = chkSpkTypeForFile.ChecksumSalt == null
+                                 ? PocoStringWithoutSalt(collectionId, fileName, chkSpkTypeForFile)
+                                 : PocoStringWithSalt(collectionId, fileName, chkSpkTypeForFile);
             ChecksumDataForFile_TYPE returnChecksumDataForFileType = null;
-            using (var db = DatabaseConnection.GetConnection())
+            using (Database db = DatabaseConnection.GetConnection())
             {
                 try
                 {
                     var latestChecksum = db.SingleOrDefault<dynamic>(pocoString);
                     returnChecksumDataForFileType = new ChecksumDataForFile_TYPE
-                    {
-                        CalculationTimestamp = DateTime.Parse(latestChecksum.date.ToString()),
-                        ChecksumSpec = chkSpkTypeForFile,
-                        ChecksumValue = (byte[])latestChecksum.checksum
-                    };
+                                                        {
+                                                            CalculationTimestamp =
+                                                                DateTime.Parse(latestChecksum.date.ToString()),
+                                                            ChecksumSpec = chkSpkTypeForFile,
+                                                            ChecksumValue = (byte[]) latestChecksum.checksum
+                                                        };
                     return returnChecksumDataForFileType;
                 }
                 catch (Exception e)
@@ -118,29 +123,39 @@ namespace PillarAPI.Utilities
             }
         }
 
-        private static Sql PocoStringWithoutSalt(string collectionId, string fileName, ChecksumSpec_TYPE chkSpkTypeForFile)
+        private static Sql PocoStringWithoutSalt(string collectionId, string fileName,
+                                                 ChecksumSpec_TYPE chkSpkTypeForFile)
         {
             Sql pocoStringWithoutSalt = Sql.Builder
-                .Append("SELECT MAX(c.date) as date, c.checksum")
-                .Append("FROM files f")
-                .Append("LEFT JOIN file_specs fs ON fs.active = 1 AND  f.file_id = fs.file_id")
-                .Append("LEFT JOIN checksum_types ct ON ct.algorithm = @0", chkSpkTypeForFile.ChecksumType.ToString())
-                .Append("LEFT JOIN checksums c ON ct.algorithm_id = c.algorithm_id AND fs.file_spec_id = c.file_spec_id")
-                .Append("LEFT JOIN users u ON u.user_id = f.user_id AND u.collection_id = @0", collectionId)
-                .Append("WHERE f.file_name = @0", fileName);
+                                           .Append("SELECT MAX(c.date) as date, c.checksum")
+                                           .Append("FROM files f")
+                                           .Append(
+                                               "LEFT JOIN file_specs fs ON fs.active = 1 AND  f.file_id = fs.file_id")
+                                           .Append("LEFT JOIN checksum_types ct ON ct.algorithm = @0",
+                                                   chkSpkTypeForFile.ChecksumType.ToString())
+                                           .Append(
+                                               "LEFT JOIN checksums c ON ct.algorithm_id = c.algorithm_id AND fs.file_spec_id = c.file_spec_id")
+                                           .Append(
+                                               "LEFT JOIN users u ON u.user_id = f.user_id AND u.collection_id = @0",
+                                               collectionId)
+                                           .Append("WHERE f.file_name = @0", fileName);
             return pocoStringWithoutSalt;
         }
 
         private static Sql PocoStringWithSalt(string collectionId, string fileName, ChecksumSpec_TYPE chkSpkTypeForFile)
         {
             Sql pocoStringWithSalt = Sql.Builder
-                .Append("SELECT MAX(c.date) as date, c.checksum")
-                .Append("FROM files f")
-                .Append("LEFT JOIN file_specs fs ON fs.active = 1 AND  f.file_id = fs.file_id")
-                .Append("LEFT JOIN checksum_types ct ON ct.algorithm = @0", chkSpkTypeForFile.ChecksumType.ToString())
-                .Append("LEFT JOIN checksums c ON ct.algorithm_id = c.algorithm_id AND fs.file_spec_id = c.file_spec_id AND c.salt IS @0", chkSpkTypeForFile.ChecksumSalt)
-                .Append("LEFT JOIN users u ON u.user_id = f.user_id AND u.collection_id = @0", collectionId)
-                .Append("WHERE f.file_name = @0", fileName);
+                                        .Append("SELECT MAX(c.date) as date, c.checksum")
+                                        .Append("FROM files f")
+                                        .Append("LEFT JOIN file_specs fs ON fs.active = 1 AND  f.file_id = fs.file_id")
+                                        .Append("LEFT JOIN checksum_types ct ON ct.algorithm = @0",
+                                                chkSpkTypeForFile.ChecksumType.ToString())
+                                        .Append(
+                                            "LEFT JOIN checksums c ON ct.algorithm_id = c.algorithm_id AND fs.file_spec_id = c.file_spec_id AND c.salt IS @0",
+                                            chkSpkTypeForFile.ChecksumSalt)
+                                        .Append("LEFT JOIN users u ON u.user_id = f.user_id AND u.collection_id = @0",
+                                                collectionId)
+                                        .Append("WHERE f.file_name = @0", fileName);
             return pocoStringWithSalt;
         }
 
@@ -149,12 +164,16 @@ namespace PillarAPI.Utilities
             bool inserted = true;
             try
             {
-                using (var db = DatabaseConnection.GetConnection())
+                using (Database db = DatabaseConnection.GetConnection())
                 {
                     var checksum = new ChecksumPoco();
                     Log.Debug(checksumDataForFileTypeForFile.ChecksumSpec.ChecksumType.ToString());
-                    var checksumsTypePoco = db.SingleOrDefault<ChecksumsTypePoco>(string.Format("Select algorithm_id FROM checksum_types WHERE algorithm = '{0}'", checksumDataForFileTypeForFile.ChecksumSpec.ChecksumType));
-                    if (checksumDataForFileTypeForFile.ChecksumSpec.ChecksumSalt != null) checksum.salt = checksumDataForFileTypeForFile.ChecksumSpec.ChecksumSalt;
+                    var checksumsTypePoco =
+                        db.SingleOrDefault<ChecksumsTypePoco>(
+                            string.Format("Select algorithm_id FROM checksum_types WHERE algorithm = '{0}'",
+                                          checksumDataForFileTypeForFile.ChecksumSpec.ChecksumType));
+                    if (checksumDataForFileTypeForFile.ChecksumSpec.ChecksumSalt != null)
+                        checksum.salt = checksumDataForFileTypeForFile.ChecksumSpec.ChecksumSalt;
                     checksum.algorithm_id = checksumsTypePoco.algorithm_id;
                     checksum.file_spec_id = fileSpecId;
                     checksum.checksum = checksumDataForFileTypeForFile.ChecksumValue;
@@ -162,7 +181,7 @@ namespace PillarAPI.Utilities
 
                     try
                     {
-                        using (var trans = db.GetTransaction())
+                        using (ITransaction trans = db.GetTransaction())
                         {
                             db.Insert(checksum);
                             trans.Complete();
@@ -201,28 +220,29 @@ namespace PillarAPI.Utilities
             }
         }
 
-        public static bool InsertAudit(string actionOnFile, string actorOnFile, string auditTrailInformation, string fileName, string info, string reportingComponent)
+        public static bool InsertAudit(string actionOnFile, string actorOnFile, string auditTrailInformation,
+                                       string fileName, string info, string reportingComponent)
         {
-            var inserted = true;
+            bool inserted = true;
 
             try
             {
-                using (var db = DatabaseConnection.GetConnection())
+                using (Database db = DatabaseConnection.GetConnection())
                 {
                     var audit = new AuditPoco
-                    {
-                        actionOnFile = actionOnFile,
-                        actorOnFile = actorOnFile,
-                        auditTrailInformation = auditTrailInformation,
-                        fileName = fileName,
-                        file_id = 0,
-                        info = info,
-                        reportingComponent = reportingComponent
-                    };
+                                    {
+                                        actionOnFile = actionOnFile,
+                                        actorOnFile = actorOnFile,
+                                        auditTrailInformation = auditTrailInformation,
+                                        fileName = fileName,
+                                        file_id = 0,
+                                        info = info,
+                                        reportingComponent = reportingComponent
+                                    };
 
                     try
                     {
-                        using (var trans = db.GetTransaction())
+                        using (ITransaction trans = db.GetTransaction())
                         {
                             db.Insert(audit);
                             trans.Complete();

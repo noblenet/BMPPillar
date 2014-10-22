@@ -2,8 +2,8 @@
 using System.Reflection;
 using Apache.NMS;
 using Apache.NMS.ActiveMQ;
-using log4net;
 using PillarAPI.CustomExceptions;
+using log4net;
 
 namespace PillarAPI.ActiveMQ
 {
@@ -20,10 +20,13 @@ namespace PillarAPI.ActiveMQ
             get
             {
                 Log.Debug("Trying to get a GlobalConnection");
-                Log.Debug("Using: " + Pillar.GlobalPillarApiSettings.MESSAGE_BUS_CONFIGURATION_URL + " " + Pillar.GlobalPillarApiSettings.PILLAR_ID);
+                Log.Debug("Using: " + Pillar.GlobalPillarApiSettings.MESSAGE_BUS_CONFIGURATION_URL + " " +
+                          Pillar.GlobalPillarApiSettings.PILLAR_ID);
                 try
                 {
-                    IConnectionFactory connectionFactory = new ConnectionFactory(Pillar.GlobalPillarApiSettings.MESSAGE_BUS_CONFIGURATION_URL, Pillar.GlobalPillarApiSettings.PILLAR_ID);
+                    IConnectionFactory connectionFactory =
+                        new ConnectionFactory(Pillar.GlobalPillarApiSettings.MESSAGE_BUS_CONFIGURATION_URL,
+                                              Pillar.GlobalPillarApiSettings.PILLAR_ID);
                     connectionFactory.RedeliveryPolicy.MaximumRedeliveries = 0;
                     return _tempvar ?? (_tempvar = connectionFactory.CreateConnection());
                 }
@@ -43,7 +46,7 @@ namespace PillarAPI.ActiveMQ
 
         public static IDestination GetDestination(ISession session, string destination)
         {
-            Log.DebugFormat("Trying to get a Destination to '{0}'",destination);
+            Log.DebugFormat("Trying to get a Destination to '{0}'", destination);
             return session.GetDestination(destination);
         }
     }

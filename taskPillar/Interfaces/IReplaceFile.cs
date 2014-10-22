@@ -1,6 +1,6 @@
 ﻿namespace PillarAPI.Interfaces
 {
-    interface IReplaceFile
+    internal interface IReplaceFile
     {
         /// <summary>
         /// </summary>

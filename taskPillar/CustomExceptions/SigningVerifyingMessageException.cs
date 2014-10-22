@@ -2,10 +2,9 @@
 
 namespace PillarAPI.CustomExceptions
 {
-    class SigningVerifyingMessageException : BaseCustomException
+    internal class SigningVerifyingMessageException : BaseCustomException
     {
         public SigningVerifyingMessageException()
-            : base()
         {
         }
 
@@ -13,7 +12,8 @@ namespace PillarAPI.CustomExceptions
         {
         }
 
-        public SigningVerifyingMessageException(string errorMessage, Exception innerException) : base(errorMessage, innerException)
+        public SigningVerifyingMessageException(string errorMessage, Exception innerException)
+            : base(errorMessage, innerException)
         {
         }
     }

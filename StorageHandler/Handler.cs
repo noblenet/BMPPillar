@@ -1,17 +1,14 @@
-﻿namespace StorageHandler
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Transactions;
+using ChinhDo.Transactions;
+using Retry;
+using StorageHandler.CustomExections;
+
+namespace StorageHandler
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Transactions;
-
-    using ChinhDo.Transactions;
-
-    using Retry;
-
-    using StorageHandler.CustomExections;
-
     /// <summary>
     ///     This class uses ChinhDo to save files and create folders in a transaction -see link
     ///     http://www.chinhdo.com/20080825/transactional-file-manager/
@@ -22,8 +19,8 @@
 
         private readonly IFileManager _fm = new TxFileManager();
 
-        private int _maxFilesPrFolder = 100000;
         private int _MaxRetryCount = 3;
+        private int _maxFilesPrFolder = 100000;
 
         #endregion Fields
 
@@ -38,10 +35,7 @@
 
         #region Properties
 
-        public string DrivesFromConfig
-        {
-            get; set;
-        }
+        public string DrivesFromConfig { get; set; }
 
         public int MaxFilesPrFolder
         {
@@ -59,14 +53,14 @@
 
         #region Methods
 
-            public void RenameFile(FileInfo oldFile, string newName)
+        public void RenameFile(FileInfo oldFile, string newName)
+        {
+            using (var scope = new TransactionScope())
             {
-                using (var scope = new TransactionScope())
-                {
-                    File.Move(oldFile.FullName, newName);
-                    scope.Complete();
-                }                
+                File.Move(oldFile.FullName, newName);
+                scope.Complete();
             }
+        }
 
         public string Savefile(FileInfo aFileInfo, string newFileName)
         {
@@ -84,12 +78,12 @@
             return newFile;
         }
 
-            public string GetNewLocation()
-            {
-                return CalculatePath();
-            }
+        public string GetNewLocation()
+        {
+            return CalculatePath();
+        }
 
-            private string CalculatePath()
+        private string CalculatePath()
         {
             string localPath = string.Empty;
             string folder = GetBaseFolder();
@@ -137,7 +131,5 @@
         }
 
         #endregion Methods
-
-        
     }
 }

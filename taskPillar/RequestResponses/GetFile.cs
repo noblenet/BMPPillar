@@ -3,18 +3,18 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Net;
 using System.Reflection;
-using bmpxsd;
-using log4net;
 using PillarAPI.Interfaces;
 using PillarAPI.Utilities;
+using bmpxsd;
+using log4net;
 
 namespace PillarAPI.RequestResponses
 {
     /// <summary>
     /// </summary>
-    public  class GetFile : IGetFile
+    public class GetFile : IGetFile
     {
-        private static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public void ProcessRequest(IMessageInfoContainer message)
         {
@@ -29,7 +29,8 @@ namespace PillarAPI.RequestResponses
                 var queryStringCollection = new NameValueCollection();
                 string fileName = receivedGetFileRequest.FileID;
                 string collectionId = receivedGetFileRequest.CollectionID;
-                string collectionDir =Pillar.GlobalPillarApiSettings.COLLECTION_FILE_DIRECTORY + receivedGetFileRequest.CollectionID + @"\";
+                string collectionDir = Pillar.GlobalPillarApiSettings.COLLECTION_FILE_DIRECTORY +
+                                       receivedGetFileRequest.CollectionID + @"\";
 
                 var f1 = new FileInfoContainer(collectionId, fileName);
                 if (string.IsNullOrEmpty(f1.FileId))
@@ -38,7 +39,8 @@ namespace PillarAPI.RequestResponses
                 }
                 else
                 {
-                    Log.DebugFormat("Er i get og skal hente filen: {0}{1}.{2}.{3}", collectionDir, f1.FileId, f1.FileSpecId, fileName);
+                    Log.DebugFormat("Er i get og skal hente filen: {0}{1}.{2}.{3}", collectionDir, f1.FileId,
+                                    f1.FileSpecId, fileName);
                     string filePath = collectionDir + f1.FileId + "." + f1.FileSpecId + "." + fileName;
                     if (!File.Exists(filePath)) // File is on Pillar, but not on local disk
                     {
@@ -79,23 +81,25 @@ namespace PillarAPI.RequestResponses
             }
 
             var responseObject = new GetFileFinalResponse
-                {
-                    CollectionID = receivedGetFileRequest.CollectionID,
-                    CorrelationID = receivedGetFileRequest.CorrelationID,
-                    Destination = receivedGetFileRequest.ReplyTo,
-                    FileAddress = receivedGetFileRequest.FileAddress,
-                    FileID = receivedGetFileRequest.FileID,
-                    //FilePart = new FilePart(),
-                    From =Pillar.GlobalPillarApiSettings.PILLAR_ID,
-                    minVersion =Pillar.GlobalPillarApiSettings.MIN_MESSAGE_XSD_VERSION,
-                    PillarID =Pillar.GlobalPillarApiSettings.PILLAR_ID,
-                    ReplyTo =Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE,
-                    ResponseInfo = responseInfo,
-                    To = receivedGetFileRequest.From,
-                    version =Pillar.GlobalPillarApiSettings.XSD_VERSION
-                };
+                                     {
+                                         CollectionID = receivedGetFileRequest.CollectionID,
+                                         CorrelationID = receivedGetFileRequest.CorrelationID,
+                                         Destination = receivedGetFileRequest.ReplyTo,
+                                         FileAddress = receivedGetFileRequest.FileAddress,
+                                         FileID = receivedGetFileRequest.FileID,
+                                         //FilePart = new FilePart(),
+                                         From = Pillar.GlobalPillarApiSettings.PILLAR_ID,
+                                         minVersion = Pillar.GlobalPillarApiSettings.MIN_MESSAGE_XSD_VERSION,
+                                         PillarID = Pillar.GlobalPillarApiSettings.PILLAR_ID,
+                                         ReplyTo = Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE,
+                                         ResponseInfo = responseInfo,
+                                         To = receivedGetFileRequest.From,
+                                         version = Pillar.GlobalPillarApiSettings.XSD_VERSION
+                                     };
             new MessageInfoContainer(responseObject).Send();
-            CollectedUtilities.InsertAudit(FileAction.GET_FILE.ToString(), receivedGetFileRequest.From, receivedGetFileRequest.AuditTrailInformation, receivedGetFileRequest.FileID, responseInfo.ResponseText,Pillar.GlobalPillarApiSettings.PILLAR_ID);
+            CollectedUtilities.InsertAudit(FileAction.GET_FILE.ToString(), receivedGetFileRequest.From,
+                                           receivedGetFileRequest.AuditTrailInformation, receivedGetFileRequest.FileID,
+                                           responseInfo.ResponseText, Pillar.GlobalPillarApiSettings.PILLAR_ID);
         }
 
         private static void GetFileProgressCallBack(object sender, UploadProgressChangedEventArgs e)
@@ -110,7 +114,8 @@ namespace PillarAPI.RequestResponses
             if (archived)
             {
                 responseInfo.ResponseCode = ResponseCode.FILE_TRANSFER_FAILURE;
-                responseInfo.ResponseText = "File with given FileID is not available for download. Contact SA to have file made available";
+                responseInfo.ResponseText =
+                    "File with given FileID is not available for download. Contact SA to have file made available";
             }
             else
             {
@@ -118,23 +123,25 @@ namespace PillarAPI.RequestResponses
                 responseInfo.ResponseText = "File with given FileID has NOT been found for a read request";
             }
             var responseObject = new GetFileFinalResponse
-                {
-                    CorrelationID = receivedGetFileRequest.CorrelationID,
-                    CollectionID = receivedGetFileRequest.CollectionID,
-                    Destination = receivedGetFileRequest.ReplyTo,
-                    FileAddress = receivedGetFileRequest.FileAddress,
-                    FileID = receivedGetFileRequest.FileID,
-                    FilePart = new FilePart(),
-                    From =Pillar.GlobalPillarApiSettings.PILLAR_ID,
-                    minVersion = receivedGetFileRequest.minVersion,
-                    PillarID =Pillar.GlobalPillarApiSettings.PILLAR_ID,
-                    ReplyTo =Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE,
-                    ResponseInfo = responseInfo,
-                    To = receivedGetFileRequest.From,
-                    version =Pillar.GlobalPillarApiSettings.XSD_VERSION
-                };
+                                     {
+                                         CorrelationID = receivedGetFileRequest.CorrelationID,
+                                         CollectionID = receivedGetFileRequest.CollectionID,
+                                         Destination = receivedGetFileRequest.ReplyTo,
+                                         FileAddress = receivedGetFileRequest.FileAddress,
+                                         FileID = receivedGetFileRequest.FileID,
+                                         FilePart = new FilePart(),
+                                         From = Pillar.GlobalPillarApiSettings.PILLAR_ID,
+                                         minVersion = receivedGetFileRequest.minVersion,
+                                         PillarID = Pillar.GlobalPillarApiSettings.PILLAR_ID,
+                                         ReplyTo = Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE,
+                                         ResponseInfo = responseInfo,
+                                         To = receivedGetFileRequest.From,
+                                         version = Pillar.GlobalPillarApiSettings.XSD_VERSION
+                                     };
             new MessageInfoContainer(responseObject).Send();
-            CollectedUtilities.InsertAudit(FileAction.GET_FILE.ToString(), receivedGetFileRequest.From, receivedGetFileRequest.AuditTrailInformation, receivedGetFileRequest.FileID, responseInfo.ResponseText,Pillar.GlobalPillarApiSettings.PILLAR_ID);
+            CollectedUtilities.InsertAudit(FileAction.GET_FILE.ToString(), receivedGetFileRequest.From,
+                                           receivedGetFileRequest.AuditTrailInformation, receivedGetFileRequest.FileID,
+                                           responseInfo.ResponseText, Pillar.GlobalPillarApiSettings.PILLAR_ID);
         }
     }
 }

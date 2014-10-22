@@ -1,21 +1,23 @@
-﻿using PillarAPI.Interfaces;
+﻿using System;
+using PillarAPI.Interfaces;
 
 namespace PillarAPI
 {
     public class PillarWrapper : IPillarWrapper
     {
-        private readonly IPutFile _putFile;
-        private readonly IGetFile _getFile;
-        private readonly IGetChecksum _getChecksum;
-        private readonly IGetStatus _getStatus;
         private readonly IGetAuditTrail _getAuditTrail;
+        private readonly IGetChecksum _getChecksum;
+        private readonly IGetFile _getFile;
         private readonly IGetFileId _getFileId;
+        private readonly IGetStatus _getStatus;
+        private readonly IPutFile _putFile;
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PillarWrapper"/> class.
+        ///     Initializes a new instance of the <see cref="PillarWrapper" /> class.
         /// </summary>
-        public PillarWrapper(IPutFile putFile, IGetFile getFile, IGetChecksum getChecksum,IGetStatus getStatus,IGetAuditTrail getAuditTrail, IGetFileId getFileId)
+        public PillarWrapper(IPutFile putFile, IGetFile getFile, IGetChecksum getChecksum, IGetStatus getStatus,
+                             IGetAuditTrail getAuditTrail, IGetFileId getFileId)
         {
             _putFile = putFile;
             _getFile = getFile;
@@ -25,7 +27,7 @@ namespace PillarAPI
             _getFileId = getFileId;
         }
 
-     
+
         public void PutFile(IMessageInfoContainer message)
         {
             _putFile.ProcessRequest(message);
@@ -41,7 +43,7 @@ namespace PillarAPI
             _getFile.ProcessRequest(message);
         }
 
-       public void GetFileId(IMessageInfoContainer message)
+        public void GetFileId(IMessageInfoContainer message)
         {
             _getFileId.ProcessRequest(message);
         }
@@ -58,17 +60,17 @@ namespace PillarAPI
 
         public void DeleteFile(IMessageInfoContainer message)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void ReplaceFile(IMessageInfoContainer message)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void ProcessRequest(IMessageInfoContainer message)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

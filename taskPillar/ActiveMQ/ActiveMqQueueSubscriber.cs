@@ -54,23 +54,25 @@ namespace PillarAPI.ActiveMQ
         public void Start(string consumerId)
         {
             ConsumerId = consumerId;
-            Consumer = _topic != null ? _session.CreateDurableConsumer(_topic, consumerId, "2 > 1", false) : _session.CreateConsumer(_destination, null, false);
+            Consumer = _topic != null
+                           ? _session.CreateDurableConsumer(_topic, consumerId, "2 > 1", false)
+                           : _session.CreateConsumer(_destination, null, false);
             Consumer.Listener += message =>
-                {
-                    var textMessage = message as ITextMessage;
-                    try
-                    {
-                        if (textMessage == null) throw new InvalidCastException();
-                        if (OnMessageReceived == null) return;
-                        message.Acknowledge();
-                        OnMessageReceived(textMessage);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex.Message, ex);
-                        throw;
-                    }
-                };
+                                     {
+                                         var textMessage = message as ITextMessage;
+                                         try
+                                         {
+                                             if (textMessage == null) throw new InvalidCastException();
+                                             if (OnMessageReceived == null) return;
+                                             message.Acknowledge();
+                                             OnMessageReceived(textMessage);
+                                         }
+                                         catch (Exception ex)
+                                         {
+                                             Log.Error(ex.Message, ex);
+                                             throw;
+                                         }
+                                     };
         }
     }
 }

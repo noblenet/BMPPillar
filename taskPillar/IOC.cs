@@ -10,7 +10,7 @@ namespace PillarAPI
 {
     public class IOC
     {
-        readonly IWindsorContainer _container = new WindsorContainer();
+        private readonly IWindsorContainer _container = new WindsorContainer();
 
         public IOC(PillarTypeEnum pillarType)
         {
@@ -30,11 +30,13 @@ namespace PillarAPI
             switch (pillarType)
             {
                 case PillarTypeEnum.Pillar:
-                 
+
                     _container.Register(Component.For<IPutFile>().ImplementedBy<PutFileWithWebDav>());
                     _container.Register(Component.For<IGetChecksum>().ImplementedBy<GetChecksum>());
                     _container.Register(Component.For<IGetFile>().ImplementedBy<GetFileWithWebDav>());
-                    _container.Register(Component.For<IResponseBuilderForIdentifyPillarsForGetFileRequest>().ImplementedBy<ResponseBuilderForIdentifyPillarsForGetFileRequest>());
+                    _container.Register(
+                        Component.For<IResponseBuilderForIdentifyPillarsForGetFileRequest>()
+                                 .ImplementedBy<ResponseBuilderForIdentifyPillarsForGetFileRequest>());
 
 
                     break;
@@ -42,7 +44,9 @@ namespace PillarAPI
                     _container.Register(Component.For<IGetFile>().ImplementedBy<ChecksumGetFile>());
                     _container.Register(Component.For<IGetChecksum>().ImplementedBy<ChecksumGetChecksum>());
                     _container.Register(Component.For<IPutFile>().ImplementedBy<ChecksumPutFile>());
-                    _container.Register(Component.For<IResponseBuilderForIdentifyPillarsForGetFileRequest>().ImplementedBy<ChecksumResponseBuilderForIdentifyPillarsForGetFileRequest>());
+                    _container.Register(
+                        Component.For<IResponseBuilderForIdentifyPillarsForGetFileRequest>()
+                                 .ImplementedBy<ChecksumResponseBuilderForIdentifyPillarsForGetFileRequest>());
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("pillarType");
@@ -53,7 +57,7 @@ namespace PillarAPI
         {
             return _container.Resolve<PillarQueueListener>();
         }
-      
+
         public IdentifyPillarsGeneralTopicListener GetIdentifyPillarsGeneralTopicListener()
         {
             return _container.Resolve<IdentifyPillarsGeneralTopicListener>();

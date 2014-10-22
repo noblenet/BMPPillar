@@ -6,7 +6,7 @@ namespace PillarAPI
     {
         public static IWindsorContainer BootstrapContainer()
         {
-            IWindsorContainer container= new WindsorContainer();
+            IWindsorContainer container = new WindsorContainer();
             //container.Register(Classes.FromThisAssembly().InSameNamespaceAs<PillarInitializer>().WithService.DefaultInterfaces().LifestyleTransient());
             //container.Register(Classes.FromThisAssembly().InNamespace("Apache.NMS").WithService.DefaultInterfaces().LifestyleTransient());
             return container;

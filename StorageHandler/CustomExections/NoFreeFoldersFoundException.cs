@@ -1,7 +1,7 @@
-﻿namespace StorageHandler.CustomExections
-{
-    using System;
+﻿using System;
 
+namespace StorageHandler.CustomExections
+{
     internal class NoFreeFoldersFoundException : Exception
     {
     }

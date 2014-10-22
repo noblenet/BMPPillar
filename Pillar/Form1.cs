@@ -1,12 +1,12 @@
-﻿using Pillar.Properties;
-using pillarAPI;
-using PillarAPI.Interfaces;
-using PillarAPI.Utilities;
-using System;
+﻿using System;
 using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Pillar.Properties;
+using PillarAPI.Interfaces;
+using PillarAPI.Utilities;
+using pillarAPI;
 
 namespace Pillar
 {
@@ -40,13 +40,15 @@ namespace Pillar
 
             try
             {
-                var pillarApiSettings = (PillarApiSettings)SerializationUtilities.DeserializeObject(File.ReadAllText(Settings.Default.Path2Settingsfile), typeof(PillarApiSettings));
+                var pillarApiSettings =
+                    (PillarApiSettings)
+                    SerializationUtilities.DeserializeObject(File.ReadAllText(Settings.Default.Path2Settingsfile),
+                                                             typeof (PillarApiSettings));
                 _piz = new PillarAPI.Pillar(Settings.Default.PillarType);
                 label1.Text = Resources.pillar_on;
                 ovalShape1.FillColor = Color.Lime;
-                
-                Task.Factory.StartNew(() => _piz.Initialize(pillarApiSettings));
 
+                Task.Factory.StartNew(() => _piz.Initialize(pillarApiSettings));
             }
             catch (Exception ef)
             {

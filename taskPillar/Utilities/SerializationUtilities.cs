@@ -18,7 +18,7 @@ namespace PillarAPI.Utilities
             var xs = new XmlSerializer(objectType);
             var encoding = new UTF8Encoding();
             var memoryStream = new MemoryStream(encoding.GetBytes(serializedObject));
-            var a = xs.Deserialize(memoryStream);
+            object a = xs.Deserialize(memoryStream);
             memoryStream.Dispose();
             return a;
         }
@@ -30,14 +30,14 @@ namespace PillarAPI.Utilities
             {
                 var utf = new UTF8Encoding(false);
                 var settings = new XmlWriterSettings
-                    {
-                        Encoding = utf,
-                        Indent = true,
-                        IndentChars = "  ",
-                        NewLineChars = Environment.NewLine,
-                        ConformanceLevel = ConformanceLevel.Document,
-                        OmitXmlDeclaration = false
-                    };
+                                   {
+                                       Encoding = utf,
+                                       Indent = true,
+                                       IndentChars = "  ",
+                                       NewLineChars = Environment.NewLine,
+                                       ConformanceLevel = ConformanceLevel.Document,
+                                       OmitXmlDeclaration = false
+                                   };
 
                 using (XmlWriter writer = XmlWriter.Create(ms, settings))
                 {
@@ -55,7 +55,8 @@ namespace PillarAPI.Utilities
             {
                 var settings = new XmlReaderSettings();
                 //settings.Schemas.Add(null, Pillar.GlobalPillarApiSettings.MESSAGE_XSD_FILE_PATH);
-                settings.Schemas.Add("http://bitrepository.org/BitRepositoryMessages.xsd", Pillar.GlobalPillarApiSettings.MESSAGE_XSD_FILE_PATH);
+                settings.Schemas.Add("http://bitrepository.org/BitRepositoryMessages.xsd",
+                                     Pillar.GlobalPillarApiSettings.MESSAGE_XSD_FILE_PATH);
                 settings.ValidationType = ValidationType.Schema;
                 settings.ValidationFlags |= XmlSchemaValidationFlags.ReportValidationWarnings;
                 //settings.ValidationEventHandler += ValidationCallBack;

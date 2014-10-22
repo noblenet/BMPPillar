@@ -6,10 +6,10 @@ using System.Text;
 
 namespace PillarAPI.Utilities
 {
-    class CmsMessageUtilities
+    internal class CmsMessageUtilities
     {
         /// <summary>
-        /// Uses the private key of the certificate to digitaly sign the message
+        ///     Uses the private key of the certificate to digitaly sign the message
         /// </summary>
         /// <param name="privateCertificate">Certificate containing private key</param>
         /// <param name="messageForSigning">Message for signing</param>
@@ -22,10 +22,10 @@ namespace PillarAPI.Utilities
         {
             byte[] messageForSigningInBytes = Encoding.UTF8.GetBytes(messageForSigning);
             var cmsSigner = new CmsSigner(privateCertificate)
-            {
-                DigestAlgorithm = new Oid("2.16.840.1.101.3.4.2.3"),
-                IncludeOption = X509IncludeOption.None
-            };
+                                {
+                                    DigestAlgorithm = new Oid("2.16.840.1.101.3.4.2.3"),
+                                    IncludeOption = X509IncludeOption.None
+                                };
             var contentInfoForSigning = new ContentInfo(messageForSigningInBytes);
             const SubjectIdentifierType subjectIdentifierType = SubjectIdentifierType.SubjectKeyIdentifier;
             var signer = new SignedCms(subjectIdentifierType, contentInfoForSigning);
@@ -37,7 +37,7 @@ namespace PillarAPI.Utilities
 
 
         /// <summary>
-        /// Uses public key to verify that message is signed with the right certificate.
+        ///     Uses public key to verify that message is signed with the right certificate.
         /// </summary>
         /// <param name="publicCertificate">Certificate containing public key.</param>
         /// <param name="signedMessageInBytes">Message for verifying.</param>
@@ -49,7 +49,7 @@ namespace PillarAPI.Utilities
         {
             byte[] signedMessageInBytes = StringManipulation.StringToBase64ByteArray(signedMessage);
             const SubjectIdentifierType subjectIdentifierType = SubjectIdentifierType.SubjectKeyIdentifier;
-            SignedCms verifier = new SignedCms(subjectIdentifierType);
+            var verifier = new SignedCms(subjectIdentifierType);
 
             try
             {
@@ -69,7 +69,8 @@ namespace PillarAPI.Utilities
         {
             var myStore = new X509Store(store, StoreLocation.CurrentUser);
             myStore.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
-            X509Certificate2 privateCertificate = myStore.Certificates.Find(X509FindType.FindByThumbprint, thumbprint.ToUpper(), true)[0];
+            X509Certificate2 privateCertificate =
+                myStore.Certificates.Find(X509FindType.FindByThumbprint, thumbprint.ToUpper(), true)[0];
             myStore.Close();
             return privateCertificate;
         }

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Reflection;
 using Apache.NMS;
-using log4net;
 using PillarAPI.Interfaces;
+using log4net;
 
 namespace PillarAPI.ActiveMQ
 {
@@ -27,15 +27,20 @@ namespace PillarAPI.ActiveMQ
             _itMessage.NMSTimestamp = DateTime.Now;
             _itMessage.NMSType = messageInfoContainer.MessageType.Name;
             _itMessage.Properties["org.bitrepository.messages.type"] = messageInfoContainer.MessageType.Name;
-            _itMessage.Properties["org.bitrepository.messages.collectionid"] = Pillar.GlobalPillarApiSettings.COLLECTION_ID;
+            _itMessage.Properties["org.bitrepository.messages.collectionid"] =
+                Pillar.GlobalPillarApiSettings.COLLECTION_ID;
             _itMessage.Properties["org.bitrepository.messages.signature"] = messageInfoContainer.SignedMessage;
             _itMessage.Text = messageInfoContainer.SerializedMessage;
-
         }
 
         public string GetCorrelationID
         {
             get { return _itMessage.NMSCorrelationID; }
+        }
+
+        public void Dispose()
+        {
+            _session.Dispose();
         }
 
         /// <summary>
@@ -46,14 +51,9 @@ namespace PillarAPI.ActiveMQ
         {
             using (var publisher = new ActiveMqPublisher(_itMessage.NMSDestination))
             {
-                    Log.Debug("Sending: " + _itMessage.Text);
-                    publisher.SendMessage(_itMessage);
+                Log.Debug("Sending: " + _itMessage.Text);
+                publisher.SendMessage(_itMessage);
             }
-        }
-
-        public void Dispose()
-        {
-            _session.Dispose();
         }
     }
 }

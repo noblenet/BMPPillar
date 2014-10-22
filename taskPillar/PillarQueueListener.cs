@@ -3,19 +3,19 @@ using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using Apache.NMS;
-using log4net;
 using PillarAPI.ActiveMQ;
 using PillarAPI.Interfaces;
 using PillarAPI.Utilities;
+using log4net;
 
 namespace PillarAPI
 {
-    public  class PillarQueueListener
+    public class PillarQueueListener
     {
-        private readonly IPillarWrapper _pillarWrapper;
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly IPillarWrapper _pillarWrapper;
 
-    public PillarQueueListener(IPillarWrapper pillarWrapper)
+        public PillarQueueListener(IPillarWrapper pillarWrapper)
         {
             _pillarWrapper = pillarWrapper;
         }
@@ -23,35 +23,48 @@ namespace PillarAPI
         public void DoWorkSAPillarQueue(CancellationToken token)
         {
             IConnection connection = Pillar.GlobalConnection;
-            IDestination destination = ActiveMQSetup.GetDestination(ActiveMQSetup.GetSession(connection),Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE);
+            IDestination destination = ActiveMQSetup.GetDestination(ActiveMQSetup.GetSession(connection),
+                                                                    Pillar.GlobalPillarApiSettings.SA_PILLAR_QUEUE);
             var messagequeueSubscriber = new ActiveMqQueueSubscriber(ActiveMQSetup.GetSession(connection), destination);
-            X509Certificate2 publicCertificate = CmsMessageUtilities.GetCertificate(Pillar.GlobalPillarApiSettings.USER_CERTIFICATES_STORE, Pillar.GlobalPillarApiSettings.PUBLIC_CERTIFICATE_THUMBPRINT);
+            X509Certificate2 publicCertificate =
+                CmsMessageUtilities.GetCertificate(Pillar.GlobalPillarApiSettings.USER_CERTIFICATES_STORE,
+                                                   Pillar.GlobalPillarApiSettings.PUBLIC_CERTIFICATE_THUMBPRINT);
             messagequeueSubscriber.Start(Pillar.GlobalPillarApiSettings.SA_QUEUE_SUBSCRIBER);
             MessageInfoContainer messageInfoContainer;
             messagequeueSubscriber.OnMessageReceived += message =>
-                {
-                    Log.Debug(message.Text);
+                                                            {
+                                                                Log.Debug(message.Text);
 
-                    messageInfoContainer = new MessageInfoContainer(message);
-                    if (!messageInfoContainer.IsFromValidCollection) return;
-                    if (!string.IsNullOrEmpty(message.Properties["org.bitrepository.messages.signature"].ToString()) &&
-                        CmsMessageUtilities.CmsSignedMessageVerifier(publicCertificate, message.Properties["org.bitrepository.messages.signature"].ToString()))
-                    {
-                        Log.DebugFormat("Messagetype: {0}", messageInfoContainer.MessageTypeName);
-                        try
-                        {
-                            ExecuteRequest(messageInfoContainer);
-                            message.Acknowledge();
-                            Log.DebugFormat("Message '{0}' is acknowledged", message);
-                            GC.Collect();
-                        }
-                        catch (Exception e)
-                        {
-                            Log.Error(e.Message, e);
-                            throw;
-                        }
-                    }
-                };
+                                                                messageInfoContainer = new MessageInfoContainer(message);
+                                                                if (!messageInfoContainer.IsFromValidCollection) return;
+                                                                if (
+                                                                    !string.IsNullOrEmpty(
+                                                                        message.Properties[
+                                                                            "org.bitrepository.messages.signature"]
+                                                                            .ToString()) &&
+                                                                    CmsMessageUtilities.CmsSignedMessageVerifier(
+                                                                        publicCertificate,
+                                                                        message.Properties[
+                                                                            "org.bitrepository.messages.signature"]
+                                                                            .ToString()))
+                                                                {
+                                                                    Log.DebugFormat("Messagetype: {0}",
+                                                                                    messageInfoContainer.MessageTypeName);
+                                                                    try
+                                                                    {
+                                                                        ExecuteRequest(messageInfoContainer);
+                                                                        message.Acknowledge();
+                                                                        Log.DebugFormat(
+                                                                            "Message '{0}' is acknowledged", message);
+                                                                        GC.Collect();
+                                                                    }
+                                                                    catch (Exception e)
+                                                                    {
+                                                                        Log.Error(e.Message, e);
+                                                                        throw;
+                                                                    }
+                                                                }
+                                                            };
             while (!token.IsCancellationRequested)
             {
                 Thread.Sleep(500);
@@ -65,7 +78,7 @@ namespace PillarAPI
             Log.Debug("Listener terminated");
         }
 
-        private  void ExecuteRequest(IMessageInfoContainer message)
+        private void ExecuteRequest(IMessageInfoContainer message)
         {
             switch (message.MessageTypeName)
             {

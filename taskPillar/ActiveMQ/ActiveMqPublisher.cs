@@ -5,8 +5,8 @@ namespace PillarAPI.ActiveMQ
 {
     public class ActiveMqPublisher : IDisposable
     {
-        private bool _disposed;
         private readonly ISession _session;
+        private bool _disposed;
 
         public ActiveMqPublisher(IDestination destinationName)
         {
